@@ -27,9 +27,9 @@
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
 
-      function writeDB(results) {
+      function writeDB(results, modifier) {
 
-        set(ref(db, 'students/' + findStudentName()), {
+        set(ref(db, 'students/' + findStudentName()+modifier), {
           Estudiante_inscripto: findStudentName(),
           Nivel: findChoiceText("levell-selection", 1),
           Fecha: { ".sv": "timestamp" },
@@ -42,22 +42,32 @@
 
     }
 
-    async function checkIfStudentExists() {
-      const studentRef = ref(db, 'students/' + findStudentName());
+    async function checkIfStudentExists(modifier) {
+      const studentRef = ref(db, 'students/' + findStudentName()+modifier);
       const snapshot = await get(studentRef);
       return snapshot.exists();
     }
+    async function verificarYGuardarEstudiante(sender, modifier = null) {
+        let i;
+        if (modifier === null) {
+          i = "";
+        } else {
+          i = parseInt(modifier, 10);
+          if (isNaN(i)) {
+            i = 0;
+          }
+        }
 
-    async function verificarYGuardarEstudiante(sender) {
-      const estudianteExiste = await checkIfStudentExists();
-      if (estudianteExiste) {
-        console.log("El estudiante ya existe");
-        alert("El estudiante ya está registrado");
-      } else {
-        console.log("El estudiante no existe");
-        window.writeDB(sender.data);
+        const estudianteExiste = await checkIfStudentExists(i === "" ? "" : i.toString());
+        if (estudianteExiste) {
+          console.log("El estudiante ya existe");
+          i += 1;
+          verificarYGuardarEstudiante(sender, i.toString());
+        } else {
+          console.log("El estudiante no existe");
+          window.writeDB(sender.data, i === "" ? "" : i.toString());
+        }
       }
-    }
 
   
     
