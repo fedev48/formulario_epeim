@@ -27,11 +27,12 @@
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
 
-      function writeDB(results, modifier) {
-
+    function writeDB(results, modifier) {
+        console.log(results);
         set(ref(db, 'students/' + findStudentName()+modifier), {
           Estudiante_inscripto: findStudentName(),
           Nivel: findChoiceText("levell-selection", 1),
+          blob: JSON.stringify(results),
           Fecha: { ".sv": "timestamp" },
         })
         .then(() => {
@@ -47,6 +48,7 @@
       const snapshot = await get(studentRef);
       return snapshot.exists();
     }
+
     async function verificarYGuardarEstudiante(sender, modifier = null) {
         let i;
         if (modifier === null) {
@@ -65,9 +67,10 @@
           verificarYGuardarEstudiante(sender, i.toString());
         } else {
           console.log("El estudiante no existe");
-          window.writeDB(sender.data, i === "" ? "" : i.toString());
+          window.writeDB(sender, i === "" ? "" : i.toString());
         }
       }
+
 
   
     

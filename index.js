@@ -1,14 +1,12 @@
 const survey = new Survey.Model(json); 
 survey.hideRequiredErrors = true;
 survey.applyTheme(themeJson); 
-survey.onComplete.add((sender, options) => {
-    writePDF(sender.data).save(findStudentName() + ".pdf");
+survey.onComplete.add(async(sender, options) => {
 
-    
-    verificarYGuardarEstudiante(sender.data);
-    console.log(window.checkIfStudentExists());
-    
-    
+    // writePDF(sender.data).save(findStudentName() + ".pdf");
+    const pdf = writePDF(sender.data);
+    const blob = await createBlobFile(pdf);
+    verificarYGuardarEstudiante(blob);
    
 });
 
@@ -135,6 +133,28 @@ function findChoiceText(questionName, value) {
         }
     }
     return value;
+}
+
+async function createBlobFile(doc) {
+    var blobFile = doc.output('blob');
+   
+    const blobToBase64 = async blob => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = err => reject(err);
+            reader.readAsDataURL(blob);
+        });
+
+    };
+
+    const base64Blob = await blobToBase64(blobFile);
+    // Extraer solo la parte de la cadena Base64 (sin el prefijo "data:application/pdf;base64,")
+    const base64String = base64Blob.split(',')[1];
+    
+    return base64String;
+
+    
 }
 
 
