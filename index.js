@@ -1,4 +1,5 @@
 const survey = new Survey.Model(json); 
+survey.completedHtml = "<h3>¡Gracias por tu interés en nuestra institución!</h3><p>Revisaremos tu solicitud y si hay vacante disponible nos pondremos en contacto en breve.</p>";
 survey.hideRequiredErrors = true;
 survey.applyTheme(themeJson); 
 survey.onComplete.add(async(sender, options) => {
@@ -102,6 +103,34 @@ function findStudentName() {
     return studentName;
 }
 
+function findStudentLevel() {
+    let studentLevel = "";
+    for (let element of survey.getAllQuestions()) {
+        if (element.name === "levell-selection" && element.value) {
+            studentLevel = findChoiceText("levell-selection", element.value);
+        }
+    }
+   
+    return studentLevel;
+}
+
+function findStudentCourse() {
+    let studentGrade = "";
+    for (let element of survey.getAllQuestions()) {
+        if (element.name === "grado"&& element.value) {
+            // onsole.log(element.value);
+            studentGrade = findChoiceText("grado", element.value);
+        } else if (element.name === "gradoSec" && element.value) {
+            // console.log(element.value);
+            studentGrade = findChoiceText("gradoSec", element.value);
+        }else if (element.name === "sala" && element.value) {
+            // onsole.log(element.value);
+            studentGrade = findChoiceText("sala", element.value);
+        }
+    }
+    return studentGrade;
+}
+
 function findTitleByNameInArray(name, array) {
     for (let element of survey.getAllQuestions()) {
         if (element.name === array) {
@@ -149,7 +178,7 @@ async function createBlobFile(doc) {
     };
 
     const base64Blob = await blobToBase64(blobFile);
-    // Extraer solo la parte de la cadena Base64 (sin el prefijo "data:application/pdf;base64,")
+    // Extraer solo la parte de la cadena Base64
     const base64String = base64Blob.split(',')[1];
     
     return base64String;
