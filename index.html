@@ -54,6 +54,8 @@
     }
 
     grecaptcha.ready(function() {
+      console.log("Ready");
+
       grecaptcha.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'submit'})
       .then(token => {
         console.log(token);
