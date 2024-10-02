@@ -8,6 +8,12 @@ survey.onComplete.add(async(sender, options) => {
     const pdf = writePDF(sender.data);
     const blob = await createBlobFile(pdf);
     verificarYGuardarEstudiante(blob);
+
+    e.preventDefault();
+    grecaptcha.enterprise.ready(async () => {
+      const token = await grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'LOGIN'});
+        console.log(token);
+    });
    
 });
 
