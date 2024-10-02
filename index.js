@@ -4,16 +4,13 @@ survey.hideRequiredErrors = true;
 survey.applyTheme(themeJson); 
 survey.onComplete.add(async(sender, options) => {
 
+    
     // writePDF(sender.data).save(findStudentName() + ".pdf");
     const pdf = writePDF(sender.data);
     const blob = await createBlobFile(pdf);
     verificarYGuardarEstudiante(blob);
 
-    // e.preventDefault();
-    // grecaptcha.enterprise.ready(async () => {
-    //   const token = await grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'LOGIN'});
-    //     console.log(token);
-    // });
+    
    
 });
 
