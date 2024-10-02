@@ -53,12 +53,12 @@
         });
     }
 
-    // grecaptcha.ready(function() {console.log("token");
-      // grecaptcha.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'submit'})
-      // .then(token => {
-      //   console.log(token);
-      //   });
-    // });
+    grecaptcha.ready(function() {
+      grecaptcha.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'submit'})
+      .then(token => {
+        console.log(token);
+        });
+    });
 
     async function checkIfStudentExists(modifier) {
       const studentRef = ref(db, 'students/' + findStudentName()+modifier);
