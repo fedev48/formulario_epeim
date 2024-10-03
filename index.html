@@ -31,7 +31,17 @@
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
 
+      
+
     async function writeDB(results, modifier) {
+      
+
+      firebase.appCheck().initializeAppCheck({
+        provider: 'recaptcha',
+        recaptchaProvider: {
+          siteKey: '6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB'
+        }
+      });
 
         const studentName = findStudentName();
         const studentLevel = findStudentLevel();
