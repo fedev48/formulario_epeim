@@ -14,7 +14,7 @@ const json = {
         "title": "Nombre",
         "titleLocation": "top",
         "descriptionLocation": "underInput",
-        // "isRequired": true,
+        "isRequired": true,
       },
    
       {
@@ -23,7 +23,7 @@ const json = {
        "startWithNewLine": false,
        "titleLocation": "top",
        "title": "Apellido",
-      //  "isRequired": true,
+       "isRequired": true,
       },
       {
         "type": "text",
@@ -31,7 +31,7 @@ const json = {
         "startWithNewLine": true,
         "titleLocation": "top",
         "title": "DNI",
-        // "isRequired": true,
+        "isRequired": true,
         "pattern": "\\d{2}\\.\\d{3}\\.\\d{3}",
         "maskType": "pattern",
         "maskSettings": {
@@ -49,7 +49,7 @@ const json = {
        "min": "2006-01-01",
        "max": "2024-01-01",
        "maskType": "datetime",
-      //  "isRequired": true
+       "isRequired": true
       },
       {
         "type":"dropdown",
@@ -58,7 +58,7 @@ const json = {
         "titleLocation": "top",
         "maxWidth": "30%",
         "title":"Seleccione el nivel educativo",
-        // "isRequired": true,
+        "isRequired": true,
         "choices": [
             {
                 "value":"1",
@@ -81,7 +81,7 @@ const json = {
         "startWithNewLine":false,
         "titleLocation": "top",
         "visibleIf": "{levell-selection} = '1'",
-        // "isRequired": true,
+        "isRequired": true,
         "choices": [
           {
             "value": "1",
@@ -104,7 +104,7 @@ const json = {
         "startWithNewLine":false,
         "titleLocation": "top",
         "visibleIf": "{levell-selection} = '2'",
-        // "isRequired": true,
+        "isRequired": true,
         "choices": [
           {
             "value": "1",
@@ -139,7 +139,7 @@ const json = {
         "startWithNewLine":false,
         "titleLocation": "top",
         "visibleIf": "{levell-selection} = '3'",
-        // "isRequired": true,
+        "isRequired": true,
         "choices": [
           {
             "value": "1",
@@ -219,7 +219,7 @@ const json = {
        "name": "parent-name",
        "title": "Nombre",
        "titleLocation": "top",
-      //  "isRequired": true,
+       "isRequired": true,
       },
       {
        "type": "text",
@@ -227,7 +227,7 @@ const json = {
        "startWithNewLine": false,
        "titleLocation": "top",
        "title": "Apellido",
-      //  "isRequired": true,
+       "isRequired": true,
       },
       {
        "type": "text",
@@ -238,7 +238,7 @@ const json = {
        "maskSettings": {
         "pattern": "9999-999999"
        },
-      //  "isRequired": true,
+       "isRequired": true,
       },
       {
        "type": "text",
