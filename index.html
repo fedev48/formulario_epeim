@@ -36,6 +36,11 @@
       //   provider: new ReCaptchaEnterpriseProvider('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB'),
       //   isTokenAutoRefreshEnabled: true
       // });
+      admin.initializeApp();
+      initializeAppCheck(admin.app(), {
+        provider: new ReCaptchaEnterpriseProvider('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB'),
+        isTokenAutoRefreshEnabled: true 
+      });
 
       
 
