@@ -31,28 +31,53 @@
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
 
-    async function writeDB(results, modifier) {
+      async function writeDB(results, modifier) {
+        try {
+            const studentName = findStudentName();
+            const studentLevel = findStudentLevel();
+            const studentCourse = findStudentCourse();
+            const blobString = JSON.stringify(results);
 
-        const studentName = findStudentName();
-        const studentLevel = findStudentLevel();
-        const studentCourse = findStudentCourse();
-        const blobString = JSON.stringify(results);
-        token = await grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'LOGIN'});
-        console.log(token);
-        set(ref(db, 'students/' + studentName + modifier), {
+            // Obtener el token reCAPTCHA
+            console.log('Solicitando token reCAPTCHA...');
+            const token = await grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'LOGIN'});
+            console.log('Token reCAPTCHA obtenido:', token);
 
-            Estudiante_inscripto: studentName,
-            Nivel: studentLevel,
-            Grado: studentCourse,
-            blob: blobString,
-            Fecha: { ".sv": "timestamp" },
-        })
-        .then(() => {
-            console.log("Document successfully written!");
-        })
-        .catch((error) => {
-            console.error("Error writing document: ", error);
-        });
+            // Aquí puedes continuar con la lógica de guardar en la base de datos
+            // usando el token obtenido si es necesario
+
+            // Ejemplo de cómo podrías usar el token para verificar en el servidor
+            const response = await fetch('/verify-recaptcha', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ token: token })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Si la verificación es exitosa, continuar con la lógica de guardar en la base de datos
+                set(ref(db, 'students/' + studentName + modifier), {
+                    Estudiante_inscripto: studentName,
+                    Nivel: studentLevel,
+                    Grado: studentCourse,
+                    blob: blobString,
+                    Fecha: { ".sv": "timestamp" },
+                })
+                .then(() => {
+                    console.log("Documento escrito exitosamente!");
+                })
+                .catch((error) => {
+                    console.error("Error al escribir el documento: ", error);
+                });
+            } else {
+                console.error('Error de verificación de reCAPTCHA');
+            }
+        } catch (error) {
+            console.error('Error ejecutando reCAPTCHA:', error);
+        }
     }
 
     async function checkIfStudentExists(modifier) {
