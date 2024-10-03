@@ -49,8 +49,7 @@
         const blobString = JSON.stringify(results);
 
         
-        const token = await obtenerTokenReCaptcha();
-        console.log('Token reCAPTCHA obtenido:', token);
+        verifyToken();
 
         set(ref(db, 'students/' + studentName + modifier), {
 
@@ -68,16 +67,27 @@
         });
     }
     
-
-    async function obtenerTokenReCaptcha() {
-    try {
-        const token = await grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'LOGIN'});
-        return token;
-    } catch (error) {
-        console.error('Error al solicitar token reCAPTCHA:', error);
-        return null;
+    async function verifyToken() {
+      const token = await getToken();
+      try {
+        await firebase.appCheck().getToken(token);
+        console.log('Token validado correctamente');
+      } catch (error) {
+        console.error('Error al validar el token:', error);
+      }
     }
-}
+
+    async function getToken() {
+      try {
+          const token = await grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'LOGIN'});
+          return token;
+      } catch (error) {
+          console.error('Error al solicitar token reCAPTCHA:', error);
+          return null;
+      }
+    }
+
+    
 
     async function checkIfStudentExists(modifier) {
       const studentRef = ref(db, 'students/' + findStudentName()+modifier);
