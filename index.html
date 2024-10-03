@@ -38,8 +38,8 @@
         const studentCourse = findStudentCourse();
         const blobString = JSON.stringify(results);
 
-        console.log('Solicitando token reCAPTCHA...');
-        const token = obtenerTokenReCaptcha();
+        
+        const token = await obtenerTokenReCaptcha();
         console.log('Token reCAPTCHA obtenido:', token);
 
         set(ref(db, 'students/' + studentName + modifier), {
@@ -61,9 +61,7 @@
 
     async function obtenerTokenReCaptcha() {
     try {
-        console.log('Solicitando token reCAPTCHA...');
         const token = await grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'LOGIN'});
-        console.log('Token reCAPTCHA obtenido:', token);
         return token;
     } catch (error) {
         console.error('Error al solicitar token reCAPTCHA:', error);
