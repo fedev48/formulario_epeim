@@ -50,11 +50,7 @@
         const studentLevel = findStudentLevel();
         const studentCourse = findStudentCourse();
         const blobString = JSON.stringify(results);
-
-        console.log(await getToken());
-
         
-      
         set(ref(db, 'students/' + studentName + modifier), {
 
             Estudiante_inscripto: studentName,
