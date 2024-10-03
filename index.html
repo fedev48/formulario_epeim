@@ -30,18 +30,19 @@
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
+      const appCheck = app.appCheck().initializeAppCheck({
+        provider: 'recaptcha',
+        recaptchaProvider: {
+          siteKey: '6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB'
+        }
+      });
 
       
 
     async function writeDB(results, modifier) {
       
 
-      app.appCheck().initializeAppCheck({
-        provider: 'recaptcha',
-        recaptchaProvider: {
-          siteKey: '6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB'
-        }
-      });
+      
 
         const studentName = findStudentName();
         const studentLevel = findStudentLevel();
@@ -70,7 +71,7 @@
     async function verifyToken() {
       const token = await getToken();
       try {
-        await app.appCheck().getToken(token);
+        await appCheck().getToken(token);
         console.log('Token validado correctamente');
       } catch (error) {
         console.error('Error al validar el token:', error);
