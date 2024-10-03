@@ -37,8 +37,8 @@
         const studentLevel = findStudentLevel();
         const studentCourse = findStudentCourse();
         const blobString = JSON.stringify(results);
-        // token = await grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'LOGIN'});
-        // console.log(token);
+        token = await grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'LOGIN'});
+        console.log(token);
         set(ref(db, 'students/' + studentName + modifier), {
 
             Estudiante_inscripto: studentName,
