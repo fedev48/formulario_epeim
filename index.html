@@ -15,7 +15,7 @@
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js";
       // import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
-      import { initializeAppCheck, ReCaptchaEnterpriseProvider, getAppCheck } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app-check.js';
+      import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app-check.js';
       import { getDatabase,ref, set, get, child} from "https://www.gstatic.com/firebasejs/10.14.0//firebase-database.js";
       // Your web app's Firebase configuration
       const firebaseConfig = {
@@ -35,12 +35,12 @@
 
       // Pass your reCAPTCHA v3 site key (public key) to activate(). Make sure this
       // key is the counterpart to the secret key you set in the Firebase console.
-      // const appCheck = initializeAppCheck(app, {
-      //   provider: new ReCaptchaEnterpriseProvider('6LcMp1YqAAAAAKMQaKXkYV07CxsmEBF1MClC2CM_'),
+      const appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider('6LcMp1YqAAAAAKMQaKXkYV07CxsmEBF1MClC2CM_'),
 
      
-      //   isTokenAutoRefreshEnabled: true
-      // });
+        isTokenAutoRefreshEnabled: true
+      });
       
     async function writeDB(results, modifier) {
       
@@ -56,10 +56,6 @@
 
         
         // verifyToken();
-
-        getAppCheck().getToken().then((token) => {
-          console.log('Token obtenido:', token);
-        });
 
         set(ref(db, 'students/' + studentName + modifier), {
 
