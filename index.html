@@ -86,7 +86,7 @@
 
     async function getToken() {
       try {
-          const token = await grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'LOGIN'});
+          const token = await grecaptcha.enterprise.execute('6LcMp1YqAAAAAKMQaKXkYV07CxsmEBF1MClC2CM_', {action: 'LOGIN'});
           return token;
       } catch (error) {
           console.error('Error al solicitar token reCAPTCHA:', error);
