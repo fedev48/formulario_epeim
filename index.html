@@ -36,7 +36,7 @@
     async function writeDB(results, modifier) {
       
 
-      firebase.appCheck().initializeAppCheck({
+      app.appCheck().initializeAppCheck({
         provider: 'recaptcha',
         recaptchaProvider: {
           siteKey: '6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB'
@@ -70,7 +70,7 @@
     async function verifyToken() {
       const token = await getToken();
       try {
-        await firebase.appCheck().getToken(token);
+        await app.appCheck().getToken(token);
         console.log('Token validado correctamente');
       } catch (error) {
         console.error('Error al validar el token:', error);
