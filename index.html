@@ -13,6 +13,7 @@
     <script type="module">
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+      import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js";
       import { getDatabase,ref, set, get, child} from "https://www.gstatic.com/firebasejs/10.14.0//firebase-database.js";
       // Your web app's Firebase configuration
@@ -30,11 +31,9 @@
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
-      const appCheck = appCheck().initializeAppCheck({
-        provider: 'recaptcha',
-        recaptchaProvider: {
-          siteKey: '6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB'
-        }
+      const appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB'),
+        isTokenAutoRefreshEnabled: true
       });
 
       
