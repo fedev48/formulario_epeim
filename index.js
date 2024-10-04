@@ -8,9 +8,8 @@ survey.onComplete.add(async(sender, options) => {
     // writePDF(sender.data).save(findStudentName() + ".pdf");
     const pdf = writePDF(sender.data);
     const blob = await createBlobFile(pdf);
-    verificarYGuardarEstudiante(blob);
-
     
+    verificarYGuardarEstudiante(blob);
    
 });
 
