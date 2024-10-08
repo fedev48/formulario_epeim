@@ -51,7 +51,7 @@ body {
     position: absolute;
     top: 50%; 
     transform: translateY(-50%); 
-    height: calc(100% - 20px); 
+    height: calc(100% - 15px); 
     width: auto;
 }
 
@@ -66,10 +66,17 @@ body {
 @media (max-width: 600px) {
     #headerText {
         font-size: 15px; 
-        padding-left: 80px; 
+        padding-left: 90px; 
         padding-right: 80px;
         padding-bottom: 20px;
         padding-top: 20px;
     }
+    #leftLogo, #rightLogo {
+      position: absolute;
+      top: 50%; 
+      transform: translateY(-50%); 
+      height: calc(80% - 15px); 
+      width: auto;
+  }
 
 }
