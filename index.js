@@ -1,5 +1,5 @@
 const survey = new Survey.Model(json); 
-survey.completedHtml = "<h3>¡Gracias por tu interés en nuestra institución!</h3><p>Revisaremos tu solicitud y si hay vacante disponible nos pondremos en contacto en breve.</p>";
+survey.completedHtml = "<h3>¡Gracias por tu interés en nuestra institución!</h3><p>Su solicitud ha sido incluida en nuestra lista de espera. Nos pondremos en contacto con usted apenas tengamos novedades.</p>";
 survey.hideRequiredErrors = true;
 survey.applyTheme(themeJson); 
 survey.onComplete.add(async(sender, options) => {

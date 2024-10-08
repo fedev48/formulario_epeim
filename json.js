@@ -248,6 +248,7 @@ const json = {
        "titleLocation": "top",
        "autocomplete": "email",
         "inputType": "email",
+        "isRequired": true,
       }
      ],
      "panelCount": 1,
@@ -265,15 +266,16 @@ const json = {
     //   "cols": 50
     },
     {
-     "type": "radiogroup",
-     "name": "acknowledgement",
-     "titleLocation": "hidden",
-     "choices": [
-      {
-       "value": "Item 1",
-       "text": "La información proporcionada es correcta y completa"
-      }
-     ]
+    //  "type": "radiogroup",
+    //  "name": "acknowledgement",
+    //  "titleLocation": "hidden",
+    //  "choices": [
+    //   {
+    //    "value": "Item 1",
+    //    "text": "La información proporcionada es correcta y completa"
+      
+    //   }
+    //  ]
     },
     
     {
@@ -283,7 +285,8 @@ const json = {
      "maxWidth": "30%",
      "placeholder": "Firma",
      "titleLocation": "hidden",
-     "signatureWidth": 335
+     "signatureWidth": 335,
+     "isRequired": true,
     },
     {
      "type": "text",
@@ -291,6 +294,7 @@ const json = {
      "maxWidth": "30%",
      "titleLocation": "hidden",
      "placeholder": "Nombre y apellido",
+     "isRequired": true,
     }
    ],
    "title": "Información del tutor"
