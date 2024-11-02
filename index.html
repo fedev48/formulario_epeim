@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/survey-core@1.12.1/themes/index.min.js"></script>
     <script src="https://unpkg.com/survey-js-ui@1.12.1/survey-js-ui.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
-    <!-- <script src="https://www.google.com/recaptcha/enterprise.js?render=6LcMp1YqAAAAAKMQaKXkYV07CxsmEBF1MClC2CM_"></script>  -->
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LcMp1YqAAAAAKMQaKXkYV07CxsmEBF1MClC2CM_"></script> 
     <script type="module">
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
@@ -19,22 +19,16 @@
       
       // Your web app's Firebase configuration
       const firebaseConfig = {
-        // descomentar linea 115 a 119
-        // apiKey: "AIzaSyCly-YdV2qRxb4_E4aTokSrxqdydPR-xbI",
-        // authDomain: "formulario-de-pre-inscrip-db.firebaseapp.com",
-        // databaseURL: "https://formulario-de-pre-inscrip-db-default-rtdb.firebaseio.com",
-        // projectId: "formulario-de-pre-inscrip-db",
-        // storageBucket: "formulario-de-pre-inscrip-db.appspot.com",
-        // messagingSenderId: "174126822708",
-        // appId: "1:174126822708:web:1a098827fcefb81600a161",
-        // measurementId: "G-KV6B51EFZ2"
-        apiKey: "AIzaSyBbzlfGZrmNZmrJ8sXHRydrjSU79HqczIw",
-        authDomain: "fichainscripcionepeim.firebaseapp.com",
-        databaseURL: "https://fichainscripcionepeim-default-rtdb.firebaseio.com",
-        projectId: "fichainscripcionepeim",
-        storageBucket: "fichainscripcionepeim.appspot.com",
-        messagingSenderId: "320404165497",
-        appId: "1:320404165497:web:071e7edaeec9446a63d5a8",
+        
+        apiKey: "AIzaSyCly-YdV2qRxb4_E4aTokSrxqdydPR-xbI",
+        authDomain: "formulario-de-pre-inscrip-db.firebaseapp.com",
+        databaseURL: "https://formulario-de-pre-inscrip-db-default-rtdb.firebaseio.com",
+        projectId: "formulario-de-pre-inscrip-db",
+        storageBucket: "formulario-de-pre-inscrip-db.appspot.com",
+        messagingSenderId: "174126822708",
+        appId: "1:174126822708:web:1a098827fcefb81600a161",
+        measurementId: "G-KV6B51EFZ2"
+        
       };
     
       // Initialize Firebase
@@ -149,14 +143,14 @@
      
       
 
-    //   document.addEventListener('DOMContentLoaded', function() {
-    //   grecaptcha.enterprise.ready(function() {
-    //     grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'submit'})
-    //     .then(token => {
+      document.addEventListener('DOMContentLoaded', function() {
+      grecaptcha.enterprise.ready(function() {
+        grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'submit'})
+        .then(token => {
           
-    //     });
-    //   });
-    //   });
+        });
+      });
+      });
     </script>
     <link rel="icon" href="./Assets/LOGO EPEIMM.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
