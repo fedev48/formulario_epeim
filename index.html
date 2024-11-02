@@ -19,7 +19,7 @@
       
       // Your web app's Firebase configuration
       const firebaseConfig = {
-        
+       
         apiKey: "AIzaSyCly-YdV2qRxb4_E4aTokSrxqdydPR-xbI",
         authDomain: "formulario-de-pre-inscrip-db.firebaseapp.com",
         databaseURL: "https://formulario-de-pre-inscrip-db-default-rtdb.firebaseio.com",
@@ -107,11 +107,11 @@
     }
 
     async function checkCaptchaToken() {
-      // try {
-      //   const tokenResponse = await getToken(appCheck, /* forceRefresh= */ false);
-      // } catch (error) {
-      //   alert("Por un error en el sistema su solicitud no pudo ser procesada, por favor intente nuevamente más tarde o comuniquese con nosotros.");
-      // }
+      try {
+        const tokenResponse = await getToken(appCheck, /* forceRefresh= */ false);
+      } catch (error) {
+        alert("Por un error en el sistema su solicitud no pudo ser procesada, por favor intente nuevamente más tarde o comuniquese con nosotros.");
+      }
     }
 
 
@@ -143,14 +143,14 @@
      
       
 
-      document.addEventListener('DOMContentLoaded', function() {
-      grecaptcha.enterprise.ready(function() {
-        grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'submit'})
-        .then(token => {
+    //   document.addEventListener('DOMContentLoaded', function() {
+    //   grecaptcha.enterprise.ready(function() {
+    //     grecaptcha.enterprise.execute('6LcYslUqAAAAAFBlkJvas2-9i32ryFBkyVwMGBSB', {action: 'submit'})
+    //     .then(token => {
           
-        });
-      });
-      });
+    //     });
+    //   });
+    //   });
     </script>
     <link rel="icon" href="./Assets/LOGO EPEIMM.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
