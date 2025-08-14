@@ -53,10 +53,29 @@ const json = {
       },
       {
         "type":"dropdown",
+        "name":"year",
+        "startWithNewLine":false,
+        "titleLocation": "top",
+        // "maxWidth": "30%",
+        "title":"Ciclo lectivo",
+        "isRequired": true,
+        "choices": [
+            {
+                "value":"1",
+                "text":"2025"
+            },
+            {
+                "value":"2",
+                "text":"2026"
+            },
+        ]
+      },
+      {
+        "type":"dropdown",
         "name":"levell-selection",
         "startWithNewLine":true,
         "titleLocation": "top",
-        "maxWidth": "30%",
+        // "maxWidth": "30%",
         "title":"Seleccione el nivel educativo",
         "isRequired": true,
         "choices": [
@@ -182,6 +201,23 @@ const json = {
           {
             "value": "2",
             "text": "Sociales"
+          },
+        ]
+      },
+      {
+        "type": "dropdown",
+        "name": "mode",
+        "title": "Turno",
+        "startWithNewLine":false,
+        "titleLocation": "top",
+        "choices": [
+          {
+            "value": "1",
+            "text": "Mañana"
+          },
+          {
+            "value": "2",
+            "text": "Tarde"
           },
         ]
       },
