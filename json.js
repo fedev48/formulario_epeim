@@ -206,7 +206,7 @@ const json = {
       },
       {
         "type": "dropdown",
-        "name": "mode",
+        "name": "turno",
         "title": "Turno",
         "startWithNewLine":false,
         "titleLocation": "top",
