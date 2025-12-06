@@ -104,14 +104,18 @@ const json = {
         "choices": [
           {
             "value": "1",
-            "text": "Sala de 3 años"
+            "text": "Sala de 2 años"
           },
           {
             "value": "2",
-            "text": "Sala de 4 años"
+            "text": "Sala de 3 años"
           },
           {
             "value": "3",
+            "text": "Sala de 4 años"
+          },
+          {
+            "value": "4",
             "text": "Sala de 5 años"
           }
         ]
