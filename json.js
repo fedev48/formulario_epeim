@@ -47,7 +47,7 @@ const json = {
        "inputType": "date",
        "autocomplete": "bday",
        "min": "2006-01-01",
-       "max": "2024-01-01",
+       "max": "2027-01-01",
        "maskType": "datetime",
        "isRequired": true
       },
@@ -272,7 +272,7 @@ const json = {
       {
        "type": "text",
        "name": "phone-number",
-       "title": "Numero de teléfono",
+       "title": "Numero de teléfono (sin el 0 y sin el 15)",
        "titleLocation": "top",
        "maskType": "pattern",
        "maskSettings": {
