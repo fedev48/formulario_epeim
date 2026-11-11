@@ -1,0 +1,319 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
+import { niveles } from '../data/levels';
+import { huellaSvg, pisadaSvg } from '../lib/huella';
+import { logoInline } from '../lib/logos';
+import { estilosPreinscripcion } from '../lib/estilos-preinscripcion';
+
+// Mismos valores que el campo "levell-selection" del formulario.
+const VALOR = { inicial: '1', primario: '2', secundario: '3' } as const;
+
+const tramos = [
+  { id: 'estudiante', nombre: 'Datos del alumno o alumna' },
+  { id: 'familia', nombre: 'Datos de la familia' },
+  { id: 'firma', nombre: 'Firma y aclaración' },
+];
+
+// Logos del header (los mismos que incrusta Header.astro), para cambiarlo al elegir el Jardín.
+const logos = { epeim: await logoInline('epeim'), pasitos: await logoInline('pasitos') };
+
+// Motivos del encabezado: el sol del escudo (antes de elegir) y uno por nivel.
+// El sol copia el del escudo: cinco pares de rayos rectos alrededor del disco. El centro queda en el
+// borde de abajo del encabezado (se ve medio disco) y los rayos lo cruzan entero, desvaneciéndose.
+const SOL = { x: 130, y: 150, radio: 50, alcance: 320 };
+const rayos = [-75, -44, 0, 44, 75]
+  .map((grados, i) => {
+    const a = (grados * Math.PI) / 180;
+    const d = [Math.sin(a), -Math.cos(a)]; // hacia afuera
+    const n = [Math.cos(a), Math.sin(a)]; // de costado
+    const punto = (r: number, lado: number) =>
+      `${(SOL.x + d[0] * r + n[0] * lado).toFixed(1)},${(SOL.y + d[1] * r + n[1] * lado).toFixed(1)}`;
+    // Dos barras paralelas de 10 de ancho, separadas por 6.
+    const barra = (centro: number) =>
+      `<polygon points="${punto(64, centro - 5)} ${punto(SOL.alcance, centro - 5)} ${punto(SOL.alcance, centro + 5)} ${punto(64, centro + 5)}"/>`;
+    return `<g style="--i:${i}">${barra(-8)}${barra(8)}</g>`;
+  })
+  .join('');
+const pisadasHero = Array.from({ length: 9 }, (_, i) => pisadaSvg(i % 2 === 0, 'huella-hero', `--i: ${i}; --y: ${i % 2 ? 9 : -9}px`)).join('');
+const letras: [string, number, number, number, number][] = [
+  ['A', 0, 38, -12, 5], ['b', 13, 4, 8, 3.5], ['1', 25, 46, -6, 4.5], ['+', 37, 10, 0, 3], ['c', 47, 50, 10, 3.5],
+  ['3', 58, 2, -10, 5], ['=', 69, 44, 0, 3], ['2', 79, 10, 12, 4], ['ñ', 90, 48, -8, 3.5],
+];
+const puntos = [[10, 130], [60, 98], [100, 112], [150, 70], [200, 84], [250, 40], [300, 52], [332, 14]];
+const grilla = Array.from({ length: 8 * 18 }, (_, k) => `<circle cx="${(k % 18) * 20 + 4}" cy="${Math.floor(k / 18) * 20 + 4}" r="1.6"/>`).join('');
+
+const iconos = {
+  // Tres pasitos que suben en diagonal (unos 28°, como el gráfico de la Secundaria), alternando pie
+  // izquierdo y derecho, sin encimarse. Cada pie apunta hacia donde avanza el rastro; los primeros,
+  // más tenues. El viewBox se ajusta a lo que ocupan los pies, así el ícono no tiene aire de más.
+  inicial: (() => {
+    const escala = 0.62;
+    const angulo = (28 * Math.PI) / 180; // respecto de la base
+    const d = [Math.cos(angulo), -Math.sin(angulo)]; // hacia adelante
+    const n = [-d[1], d[0]]; // hacia la derecha del que camina
+    const giro = 90 - 28;
+    const paso = 40; // distancia entre pasos, mayor que el largo del pie (~36): no se enciman
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    const pasos = [0, 1, 2].map((i) => {
+      const izquierdo = i % 2 === 0;
+      const lado = izquierdo ? -7 : 7;
+      const x = d[0] * paso * i + n[0] * lado;
+      const y = d[1] * paso * i + n[1] * lado;
+      // Esquinas de la huella (0..40 × 0..60) transformadas, para calcular el recuadro.
+      const rad = (giro * Math.PI) / 180;
+      for (const [px, py] of [[8, 0], [40, 0], [8, 60], [40, 60]]) {
+        const ux = (px - 23) * (izquierdo ? -escala : escala);
+        const uy = (py - 30) * escala;
+        const rx = x + ux * Math.cos(rad) - uy * Math.sin(rad);
+        const ry = y + ux * Math.sin(rad) + uy * Math.cos(rad);
+        minX = Math.min(minX, rx); maxX = Math.max(maxX, rx);
+        minY = Math.min(minY, ry); maxY = Math.max(maxY, ry);
+      }
+      return `<g opacity="${[0.5, 0.75, 1][i]}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${giro}) scale(${izquierdo ? -escala : escala} ${escala}) translate(-23 -30)">${huellaSvg()}</g>`;
+    });
+    const caja = [minX - 1, minY - 1, maxX - minX + 2, maxY - minY + 2].map((v) => v.toFixed(1)).join(' ');
+    return `<svg viewBox="${caja}" aria-hidden="true" fill="currentColor">${pasos.join('')}</svg>`;
+  })(),
+  primario: '<span class="icono-fichas" aria-hidden="true"><span>A</span><span>b</span><span>1</span></span>',
+  secundario: '<svg viewBox="0 0 90 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><polyline points="10,52 34,30 56,40 80,12"/><g fill="currentColor" stroke="none"><circle cx="10" cy="52" r="7"/><circle cx="34" cy="30" r="7"/><circle cx="56" cy="40" r="7"/><circle cx="80" cy="12" r="7"/></g></svg>',
+};
+---
+
+<BaseLayout
+  tema="verde"
+  titulo="Preinscripción online"
+  descripcion="Completá la preinscripción online al Jardín Pasitos Curiosos, la Primaria o la Secundaria EPEIM en Río Grande, Tierra del Fuego."
+>
+  {estilosPreinscripcion.map((href) => <link slot="head" rel="stylesheet" href={href} />)}
+
+  <script is:inline define:vars={{ logos }}>
+    // Aplica el nivel a la página: colores, motivo del encabezado, tema del header y su logo.
+    // Corre antes de que se pinte la página, así quien llega con ?nivel= no ve un cambio de colores.
+    window.epeimNivel = function (valor) {
+      var param = { 1: 'inicial', 2: 'primario', 3: 'secundario' }[valor];
+      if (param) document.documentElement.dataset.nivel = valor;
+      else delete document.documentElement.dataset.nivel;
+      var header = document.querySelector('[data-header]');
+      if (!header) return;
+      header.classList.remove('header-verde', 'header-oscuro', 'header-inicial', 'header-primario', 'header-secundario');
+      header.classList.add('header-' + (param || 'verde'));
+      if (!param) header.classList.add('header-oscuro');
+      var jardin = valor === '1';
+      var img = header.querySelector('.header-logo');
+      var logo = jardin ? logos.pasitos : logos.epeim;
+      if (img && img.getAttribute('src') !== logo.src) {
+        img.removeAttribute('srcset');
+        img.src = logo.src;
+        img.width = logo.width;
+        img.height = logo.height;
+        img.style.viewTransitionName = jardin ? 'logo-pasitos' : 'logo-epeim';
+        img.closest('a').setAttribute('aria-label', (jardin ? 'Jardín Pasitos Curiosos' : 'EPEIM') + ', ir al inicio');
+      }
+    };
+    window.epeimNivel({ inicial: '1', primario: '2', secundario: '3' }[new URLSearchParams(location.search).get('nivel')]);
+  </script>
+
+  <section class="pre-banda relative isolate overflow-hidden banda">
+    <div class="pre-deco" aria-hidden="true">
+      <svg data-deco="0" class="deco-sol" viewBox="0 0 260 150">
+        <defs>
+          <radialGradient id="sol-luz" gradientUnits="userSpaceOnUse" cx={SOL.x} cy={SOL.y} r={SOL.alcance * 0.85}>
+            <stop offset="0.24" stop-color="currentColor" />
+            <stop offset="1" stop-color="currentColor" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <g class="sol">
+          <g class="sol-rayos" fill="url(#sol-luz)" set:html={rayos} />
+          <circle cx={SOL.x} cy={SOL.y} r={SOL.radio} fill="currentColor" />
+        </g>
+      </svg>
+      <div data-deco="1" class="deco-pisadas" set:html={pisadasHero} />
+      <div data-deco="2" class="deco-letras">
+        {letras.map(([c, x, y, giro, tam], i) => <span style={`left:${x}%; top:${y}%; rotate:${giro}deg; font-size:${tam}rem; --i:${i}`}>{c}</span>)}
+      </div>
+      <svg data-deco="3" class="deco-grafico" viewBox="0 0 340 150">
+        <g fill="currentColor" opacity=".55" set:html={grilla} />
+        <polyline points={puntos.map((p) => p.join(',')).join(' ')} pathLength="1" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" />
+        <g fill="currentColor">{puntos.map(([x, y], i) => <circle cx={x} cy={y} r="6" style={`--i:${i}`} />)}</g>
+      </svg>
+    </div>
+    <div class="contenedor py-14 pb-20 md:py-20">
+      <h1 class="text-[clamp(2.5rem,6vw,4.5rem)] max-w-[14ch]">Preinscripción online</h1>
+      <p class="mt-5 max-w-2xl text-lg md:text-xl opacity-90">
+        Para el Jardín Pasitos Curiosos, la Primaria y la Secundaria EPEIM. Te lleva unos minutos y podés hacerlo desde
+        el celular.
+      </p>
+    </div>
+  </section>
+
+  <div class="bg-superficie-alt">
+    <div class="contenedor py-10 md:py-14 grid gap-10 lg:grid-cols-[19rem_1fr] lg:items-start">
+      <div class="columna-formulario min-w-0 lg:col-start-2 lg:row-start-1">
+        <fieldset class="elegir-nivel" data-elegir-nivel aria-describedby="nivel-error">
+          <legend class="font-display text-[1.75rem] leading-tight font-extrabold tracking-[-0.03em] text-titulo">¿Para qué nivel es la preinscripción?</legend>
+          <div class="mt-5 grid gap-3 sm:grid-cols-3">
+            {
+              niveles.map((n) => (
+                <label class={`nivel-opcion nivel-opcion-${n.param}`}>
+                  <input type="radio" name="nivel-elegido" value={VALOR[n.param]} class="sr-only" />
+                  <span class="nivel-icono" set:html={iconos[n.param]} />
+                  <span class="block mt-3 text-lg font-bold leading-snug">{n.marca}</span>
+                  <span class="block mt-1 text-sm text-tinta-suave">{n.rango}</span>
+                </label>
+              ))
+            }
+          </div>
+          <p id="nivel-error" class="nivel-error" data-nivel-error hidden>Elegí el nivel para poder enviar la preinscripción.</p>
+          <p class="pista-nivel" data-pista-nivel hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+            ¡Elegí un nivel para comenzar!
+          </p>
+        </fieldset>
+
+        <div class="aviso-jornada" data-aviso-jornada>
+          <div class="aviso-jornada-interior">
+            <div class="aviso-jornada-caja">
+              <svg class="aviso-jornada-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+              <p>
+                ¡Desde 2026 tenemos una modalidad <strong>flexible y opcional</strong> de doble jornada o jornada extendida
+                para los chicos del Jardín!{' '}
+                <span class="globo-ancla" data-globo>
+                  <button type="button" class="enlace" aria-expanded="false" aria-controls="jornada-detalle">Más información</button>
+                  <span id="jornada-detalle" class="globo" hidden>
+                    Las familias ahora pueden elegir los horarios de ingreso y salida entre 4 bloques a lo largo del día y armar el
+                    horario que más les convenga.
+                  </span>
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuerpo-formulario mt-10" data-cuerpo-formulario>
+          <div class="esqueleto" data-cargando-formulario>
+            <span class="sr-only" role="status">Cargando el formulario…</span>
+            <div class="esqueleto-titulo" aria-hidden="true"></div>
+            <div class="esqueleto-tarjeta" aria-hidden="true">
+              {Array.from({ length: 6 }, () => <div class="esqueleto-campo"><span /><span /></div>)}
+            </div>
+          </div>
+          <div id="surveyElement" class="formulario" data-hasta-elegir></div>
+
+          <div class="recorrido-movil lg:hidden" aria-hidden="true" data-hasta-elegir>
+            <p class="text-sm font-semibold" data-recorrido-resumen></p>
+            <div class="mt-1.5 flex flex-wrap items-center gap-x-2.5">
+              {tramos.map((t) => <div data-tramo={t.id}><div class="rastro rastro-chico" data-rastro /></div>)}
+            </div>
+          </div>
+        </div>
+
+        <div data-estado="enviando" hidden class="rounded-3xl bg-white p-8 md:p-12" role="status">
+          <div class="rastro" aria-hidden="true" data-cargando></div>
+          <p class="mt-6 font-display text-2xl md:text-3xl font-extrabold tracking-[-0.03em] focus:outline-none" tabindex="-1" data-foco>Enviando tu preinscripción…</p>
+          <p class="mt-3 text-tinta-suave">No cierres esta página.</p>
+        </div>
+
+        <div data-estado="ok" hidden class="rounded-3xl bg-white p-8 md:p-12">
+          <div class="rastro mb-6" aria-hidden="true" data-festejo></div>
+          <h2 class="text-[clamp(1.875rem,4vw,2.75rem)] text-titulo focus:outline-none" tabindex="-1" data-foco>¡Gracias por tu interés en nuestra institución!</h2>
+          <p class="mt-4 text-lg max-w-xl">
+            Recibimos tu solicitud. En menos de 24 horas te contactamos para coordinar una entrevista presencial.
+          </p>
+          <a href="/" class="boton boton-primario mt-8">Volver al inicio</a>
+        </div>
+
+        <div data-estado="error" hidden class="rounded-3xl bg-white p-8 md:p-12 border-l-8 border-tierra">
+          <h2 class="text-[clamp(1.75rem,3.5vw,2.5rem)] text-tierra-oscuro focus:outline-none" tabindex="-1" data-foco>No pudimos guardar tu preinscripción</h2>
+          <p class="mt-4 text-lg max-w-xl">
+            Tus datos siguen cargados. Revisá tu conexión y probá de nuevo. Si vuelve a fallar, escribinos por WhatsApp al{' '}
+            <a class="enlace" href={site.whatsapp.url}>{site.whatsapp.texto}</a> o a{' '}
+            <a class="enlace whitespace-nowrap" href={`mailto:${site.email}`}>{site.email}</a>.
+          </p>
+          <button type="button" class="boton boton-primario mt-8" data-reintentar>Enviar de nuevo</button>
+        </div>
+      </div>
+
+      <aside class="lg:col-start-1 lg:row-start-1 lg:sticky lg:top-28 space-y-8" aria-label="Sobre la preinscripción">
+        <div>
+          <h2 class="text-3xl">Tu recorrido</h2>
+          <p class="mt-2 text-tinta-suave" data-recorrido-resumen>Empezá eligiendo el nivel.</p>
+          <ol class="mt-5 space-y-5">
+            {
+              tramos.map((t) => (
+                <li data-tramo={t.id} class="tramo">
+                  <div class="flex items-baseline justify-between gap-3">
+                    <span class="font-semibold">{t.nombre}</span>
+                    <span class="tramo-cuenta text-sm font-semibold text-tinta-suave" data-cuenta />
+                  </div>
+                  <div class="rastro mt-2" data-rastro />
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+        <div>
+          <h2 class="text-3xl">Qué pasa después</h2>
+          <p class="mt-4">
+            Procesamos tu solicitud en menos de 24 horas y te contactamos para coordinar una entrevista presencial.
+          </p>
+        </div>
+        <div class="border-t border-tinta/15 pt-6 text-tinta-suave">
+          <p>¿Dudas? Escribinos por WhatsApp al <a class="enlace text-tinta" href={site.whatsapp.url}>{site.whatsapp.texto}</a> o a <a class="enlace text-tinta whitespace-nowrap" href={`mailto:${site.email}`}>{site.email}</a>.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<script src="../scripts/preinscripcion/form.js"></script>
+
+<style is:global>
+  .formulario .sd-root-modern {
+    background: transparent;
+  }
+  .formulario .sd-container-modern {
+    margin-bottom: 0;
+  }
+  .formulario .sd-body.sd-body--static {
+    max-width: none;
+    padding: 0;
+  }
+  .formulario .sd-page {
+    padding: 0;
+  }
+  .formulario .sd-title.sd-page__title,
+  .formulario .sd-page__title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.75rem;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--color-titulo);
+  }
+  .formulario .sd-btn--action.sd-navigation__complete-btn {
+    background: var(--color-boton);
+    border-radius: 999px;
+    padding-inline: 2.5rem;
+    font-size: 1.125rem;
+  }
+  .formulario .sd-btn--action.sd-navigation__complete-btn:hover {
+    background: var(--color-boton-hover);
+  }
+  .formulario .sd-action-bar {
+    padding-inline: 0;
+  }
+  /* La aclaración va debajo de la firma y con su mismo ancho, como en un formulario de papel. */
+  .formulario [data-name='printed-name'] .sd-input {
+    max-width: 335px;
+  }
+  /* El nivel se elige con las tarjetas de arriba (cargan este mismo campo). */
+  .formulario .sd-row > div:has(> [data-name="levell-selection"]) {
+    display: none;
+  }
+</style>

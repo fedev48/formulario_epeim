@@ -1,0 +1,29 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.development
+!.env.example
+.DS_Store
+
+# Material de origen pesado o que vive en otro repo (el sitio usa las copias de src/assets y public/media)
+Contenido/Header video.mov
+Contenido/*.png
+Contenido/Forma inscripción/
+
+# Registros del emulador de Firebase
+*-debug.log
+
+# Estado privado del script de Instagram (nunca al repo)
+server-private/**/token.json
+server-private/**/feed.json
+server-private/**/*.lock
+server-private/**/*.log
+.playwright-mcp/
+
+# Archivos locales del editor y de trabajo (no van al repo)
+CLAUDE.md
+.claude/
+.vscode/
+README.md

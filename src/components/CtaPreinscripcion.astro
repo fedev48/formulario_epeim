@@ -1,0 +1,27 @@
+---
+import Costa from './Costa.astro';
+
+interface Props {
+  arriba?: string;
+  nivel?: string;
+  titulo?: string;
+}
+const { arriba = 'var(--color-superficie)', nivel, titulo = 'Sumate a la comunidad' } = Astro.props;
+const href = nivel ? `/inscripciones/?nivel=${nivel}` : '/inscripciones/';
+---
+
+<section class="bg-cta-fondo text-cta-texto banda" aria-labelledby="cta-titulo">
+  <Costa arriba={arriba} abajo="var(--color-cta-fondo)" invertida />
+  <div class="contenedor pt-10 pb-20 md:pt-14 md:pb-24 grid gap-8 md:grid-cols-[1.4fr_1fr] md:items-end">
+    <div>
+      <h2 id="cta-titulo" class="titulo-seccion">{titulo}</h2>
+      <p class="mt-5 max-w-xl text-lg opacity-90">
+        La preinscripción se completa online en pocos minutos. En menos de 24 horas te contactamos para coordinar una
+        entrevista presencial.
+      </p>
+    </div>
+    <div class="md:justify-self-end">
+      <a href={href} class="boton boton-sobre-oscuro text-lg !px-7 !min-h-14">Completar la preinscripción</a>
+    </div>
+  </div>
+</section>

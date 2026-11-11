@@ -1,0 +1,233 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+import { niveles } from '../data/levels';
+
+interface Props {
+  titulo?: string;
+  descripcion: string;
+  imagen?: string;
+  migas?: { nombre: string; href: string }[];
+  noindex?: boolean;
+  /** Color del header arriba de todo (ver Header.astro). */
+  tema?: 'blanco' | 'hero' | 'verde' | 'inicial' | 'primario' | 'secundario';
+}
+
+const { titulo, descripcion, imagen = '/og-image.jpg', migas, noindex = false, tema } = Astro.props;
+// En la pestaña del navegador va primero la marca: "EPEIM | Jardín de Infantes…".
+const tituloCompleto = `EPEIM | ${titulo ?? 'Jardín, Primaria y Secundaria en Río Grande'}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const imagenAbsoluta = new URL(imagen, Astro.site).href;
+
+const sameAs = [site.instagram?.url, site.facebook?.url].filter(Boolean);
+const tiposNivel = { inicial: 'Preschool', primario: 'ElementarySchool', secundario: 'HighSchool' } as const;
+const direccion = {
+  '@type': 'PostalAddress',
+  streetAddress: site.direccion.calle,
+  addressLocality: site.direccion.ciudad,
+  addressRegion: site.direccion.provincia,
+  addressCountry: site.direccion.pais,
+};
+
+const organizacion = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  '@id': `${site.url}/#organizacion`,
+  name: site.nombreLargo,
+  alternateName: ['EPEIM', 'Jardín Pasitos Curiosos'],
+  slogan: site.slogan,
+  url: `${site.url}/`,
+  logo: `${site.url}/icono-512.png`,
+  image: `${site.url}/og-image.jpg`,
+  foundingDate: site.fundacion,
+  telephone: site.whatsapp.internacional,
+  email: site.email,
+  address: direccion,
+  geo: { '@type': 'GeoCoordinates', latitude: site.direccion.lat, longitude: site.direccion.lng },
+  ...(sameAs.length ? { sameAs } : {}),
+  subOrganization: niveles.map((n) => ({
+    '@type': tiposNivel[n.param],
+    name: `${n.nombre}: ${n.marca}`,
+    url: `${site.url}/${n.slug}/`,
+    address: direccion,
+  })),
+};
+
+// Nombre del sitio para los resultados de Google: va solo en el inicio, como pide Google. Tiene que ser
+// un nombre (no una descripción) y coincidir con og:site_name.
+const nombreSitio = 'Escuela EPEIM';
+const sitioWeb = Astro.url.pathname === '/' && {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: nombreSitio,
+  alternateName: ['EPEIM', 'Colegio EPEIM', 'EPEIM y Jardín Pasitos Curiosos'],
+  url: `${site.url}/`,
+};
+
+const breadcrumb = migas && {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [{ nombre: 'Inicio', href: '/' }, ...migas].map((m, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: m.nombre,
+    item: new URL(m.href, Astro.site).href,
+  })),
+};
+---
+
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Google Analytics (propiedad www.epeim.com.ar). También alimenta la conversión de Google Ads. -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-KE5QP6C9P3"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-KE5QP6C9P3');
+    </script>
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descripcion} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#1a5a36" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="64x64" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:site_name" content={nombreSitio} />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descripcion} />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={imagenAbsoluta} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(organizacion)} />
+    {sitioWeb && <script type="application/ld+json" set:html={JSON.stringify(sitioWeb)} />}
+    {breadcrumb && <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />}
+    <slot name="head" />
+
+    <script is:inline>
+      // Transiciones entre páginas más confiables:
+      // - Mientras corre una transición, el navegador manda los clics a la página entera y no al link
+      //   que está debajo: el clic se perdía. Ahora se termina la transición al instante y se activa
+      //   el link que había bajo el puntero.
+      // - Plan B: a veces la página vieja prepara la transición pero la nueva no la recibe (pasa en
+      //   algunos navegadores reales, sin un motivo claro). Entonces la página nueva la reproduce por su
+      //   cuenta: el contenido entra con un fundido, el subrayado del menú se desliza desde el link
+      //   anterior y el logo gira si se entra o se sale del Jardín.
+      // - Con la página ya cargada, en un momento libre se precarga lo que necesita la preinscripción
+      //   para mostrarse (sus estilos y el código del formulario), leyéndolo de su HTML. El HTML de las
+      //   páginas del menú lo precarga Astro: data-astro-prefetch="load" en el header.
+      var activa = null;
+      var reducir = matchMedia('(prefers-reduced-motion: reduce)');
+      addEventListener('pageswap', function (e) {
+        if (!e.viewTransition) return;
+        try { sessionStorage.setItem('vt-desde', JSON.stringify({ ruta: location.pathname, t: Date.now() })); } catch (err) {}
+      });
+      addEventListener('pagereveal', function (e) {
+        activa = e.viewTransition || null;
+        if (activa) activa.finished.finally(function () { activa = null; });
+        var desde = null;
+        try {
+          desde = JSON.parse(sessionStorage.getItem('vt-desde'));
+          sessionStorage.removeItem('vt-desde');
+        } catch (err) {}
+        if (e.viewTransition || !desde || Date.now() - desde.t > 5000 || reducir.matches) return;
+        document.documentElement.classList.add('vt-respaldo');
+        if (document.readyState === 'loading') {
+          addEventListener('DOMContentLoaded', function () { respaldo(desde.ruta); });
+        } else {
+          respaldo(desde.ruta);
+        }
+      });
+      function respaldo(rutaAnterior) {
+        var header = document.querySelector('[data-header]');
+        if (!header) return;
+        var seccion = function (ruta) { return ruta === '/' ? '/' : '/' + ruta.split('/')[1] + '/'; };
+        var indicador = header.querySelector('.nav-indicador');
+        var anterior = header.querySelector('nav a[href="' + seccion(rutaAnterior) + '"]');
+        if (indicador && anterior && !anterior.contains(indicador)) {
+          var de = anterior.getBoundingClientRect();
+          var a = indicador.parentElement.getBoundingClientRect();
+          indicador.animate(
+            [
+              { transformOrigin: 'left', transform: 'translateX(' + (de.left - a.left) + 'px) scaleX(' + de.width / a.width + ')' },
+              { transformOrigin: 'left', transform: 'none' },
+            ],
+            { duration: 450, easing: 'cubic-bezier(0.3, 0.9, 0.3, 1.05)' }
+          );
+        } else if (indicador) {
+          indicador.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300 });
+        }
+        var jardin = function (ruta) { return ruta.indexOf('/nivel-inicial/') === 0; };
+        var logo = header.querySelector('.header-logo');
+        if (logo && jardin(rutaAnterior) !== jardin(location.pathname)) {
+          // El mismo giro de entrada que la transición entre páginas (.logo-entra en global.css).
+          var enlace = logo.closest('a');
+          enlace.classList.add('logo-entra');
+          enlace.addEventListener('animationend', function () { enlace.classList.remove('logo-entra'); }, { once: true });
+        }
+      }
+      addEventListener('click', function (e) {
+        if (!activa) return;
+        var transicion = activa;
+        transicion.skipTransition();
+        if (e.target.closest && e.target.closest('a[href]')) return;
+        var x = e.clientX;
+        var y = e.clientY;
+        transicion.finished.finally(function () {
+          requestAnimationFrame(function () {
+            var bajo = document.elementFromPoint(x, y);
+            var link = bajo && bajo.closest('a[href]');
+            if (link) link.click();
+          });
+        });
+      }, true);
+      addEventListener('load', function () {
+        if (location.pathname === '/inscripciones/') return;
+        if (navigator.connection && navigator.connection.saveData) return;
+        (window.requestIdleCallback || setTimeout)(function () {
+          fetch('/inscripciones/')
+            .then(function (r) { return r.ok ? r.text() : ''; })
+            .then(function (html) {
+              var pagina = new DOMParser().parseFromString(html, 'text/html');
+              pagina.querySelectorAll('link[rel="stylesheet"][href^="/_astro/"], script[type="module"][src^="/_astro/"]').forEach(function (el) {
+                var href = el.getAttribute('href') || el.getAttribute('src');
+                if (document.querySelector('[href="' + href + '"], [src="' + href + '"]')) return;
+                var link = document.createElement('link');
+                link.rel = 'prefetch';
+                link.as = el.tagName === 'LINK' ? 'style' : 'script';
+                link.href = href;
+                document.head.append(link);
+              });
+            })
+            .catch(function () {});
+        });
+      });
+    </script>
+
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 boton boton-claro shadow-lg"
+    >
+      Saltar al contenido
+    </a>
+    <Header tema={tema} />
+    <main id="contenido" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

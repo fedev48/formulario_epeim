@@ -1,0 +1,5 @@
+# Solo imágenes cacheadas por api/instagram.php
+Options -Indexes
+<FilesMatch "\.(?!jpe?g$)[^.]+$">
+  Require all denied
+</FilesMatch>

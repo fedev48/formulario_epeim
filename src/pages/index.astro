@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeContenido from '../components/HomeContenido.astro';
+---
+
+<BaseLayout
+  tema="hero"
+  descripcion="Escuela EPEIM y Jardín Pasitos Curiosos en Río Grande, Tierra del Fuego: jardín, primaria y colegio secundario desde 1992. Conocé los niveles y preinscribite online."
+>
+  <link slot="head" rel="preload" as="image" href="/media/hero-poster.jpg" fetchpriority="high" />
+
+  <HomeContenido />
+</BaseLayout>

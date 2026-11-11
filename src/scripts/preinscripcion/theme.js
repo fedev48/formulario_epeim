@@ -1,0 +1,53 @@
+// Tema de SurveyJS con los colores y la tipografía del sitio.
+export const themeJson = {
+  themeName: 'default',
+  colorPalette: 'light',
+  isPanelless: false,
+  cssVariables: {
+    '--sjs-font-family': "'Plus Jakarta Sans Variable', system-ui, sans-serif",
+    '--sjs-base-unit': '8px',
+    '--sjs-corner-radius': '12px',
+
+    '--sjs-general-backcolor': 'rgba(255, 255, 255, 1)',
+    '--sjs-general-backcolor-dark': 'rgba(234, 242, 245, 1)',
+    '--sjs-general-backcolor-dim': 'rgba(234, 242, 245, 1)',
+    '--sjs-general-backcolor-dim-light': 'rgba(244, 250, 253, 1)',
+    '--sjs-general-backcolor-dim-dark': 'rgba(220, 238, 246, 1)',
+    '--sjs-general-forecolor': 'rgba(18, 38, 27, 1)',
+    '--sjs-general-forecolor-light': 'rgba(61, 90, 73, 1)',
+    '--sjs-general-dim-forecolor': 'rgba(18, 38, 27, 1)',
+    '--sjs-general-dim-forecolor-light': 'rgba(61, 90, 73, 1)',
+
+    '--sjs-primary-backcolor': 'rgba(26, 90, 54, 1)',
+    '--sjs-primary-backcolor-light': 'rgba(26, 90, 54, 0.1)',
+    '--sjs-primary-backcolor-dark': 'rgba(18, 38, 27, 1)',
+    '--sjs-primary-forecolor': 'rgba(255, 255, 255, 1)',
+    '--sjs-primary-forecolor-light': 'rgba(255, 255, 255, 0.25)',
+
+    '--sjs-secondary-backcolor': 'rgba(253, 204, 28, 1)',
+    '--sjs-secondary-backcolor-light': 'rgba(253, 204, 28, 0.15)',
+    '--sjs-secondary-backcolor-semi-light': 'rgba(253, 204, 28, 0.3)',
+    '--sjs-secondary-forecolor': 'rgba(18, 38, 27, 1)',
+
+    '--sjs-border-light': 'rgba(13, 43, 27, 0.12)',
+    '--sjs-border-default': 'rgba(13, 43, 27, 0.24)',
+    '--sjs-border-inside': 'rgba(13, 43, 27, 0.16)',
+    '--sjs-shadow-small': '0px 0px 0px 1px rgba(13, 43, 27, 0.18)',
+    '--sjs-shadow-small-reset': '0px 0px 0px 0px rgba(13, 43, 27, 0.18)',
+    '--sjs-shadow-medium': '0px 2px 6px 0px rgba(13, 43, 27, 0.1)',
+    '--sjs-shadow-large': '0px 8px 16px 0px rgba(13, 43, 27, 0.1)',
+    '--sjs-shadow-inner': 'inset 0px 0px 0px 1px rgba(13, 43, 27, 0.18)',
+    '--sjs-shadow-inner-reset': 'inset 0px 0px 0px 0px rgba(13, 43, 27, 0.18)',
+
+    '--sjs-special-red': 'rgba(179, 38, 15, 1)',
+    '--sjs-special-red-light': 'rgba(219, 52, 32, 0.1)',
+    '--sjs-special-red-forecolor': 'rgba(255, 255, 255, 1)',
+    '--sjs-special-green': 'rgba(0, 101, 42, 1)',
+    '--sjs-special-green-light': 'rgba(0, 101, 42, 0.1)',
+    '--sjs-special-blue': 'rgba(98, 194, 230, 1)',
+    '--sjs-special-blue-light': 'rgba(98, 194, 230, 0.15)',
+    '--sjs-special-yellow': 'rgba(253, 204, 28, 1)',
+    '--sjs-special-yellow-light': 'rgba(253, 204, 28, 0.15)',
+  },
+  headerView: 'basic',
+};

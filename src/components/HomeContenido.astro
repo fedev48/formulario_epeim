@@ -1,0 +1,88 @@
+---
+// Contenido de la home. Se usa en / y en /pruebas-color.
+import Hero from './Hero.astro';
+import NivelBanda from './NivelBanda.astro';
+import Historia from './Historia.astro';
+import InstagramFeed from './InstagramFeed.astro';
+import CtaPreinscripcion from './CtaPreinscripcion.astro';
+import Contacto from './Contacto.astro';
+import { niveles } from '../data/levels';
+import { acercarComas } from '../lib/texto';
+
+const ejes = [
+  {
+    titulo: 'En alianza con las familias',
+    texto: 'La escuela y la casa trabajan juntas en la formación de cada chico y cada chica.',
+    color: 'bg-tierra',
+  },
+  {
+    titulo: 'Emociones y empatía',
+    texto: 'Aprender a gestionar lo que sentimos y a ponernos en el lugar del otro.',
+    color: 'bg-sol',
+  },
+  {
+    titulo: 'Entender el mundo',
+    texto: 'Una mirada sistémica y competencias para desenvolverse en distintos ámbitos.',
+    color: 'bg-mar',
+  },
+  {
+    titulo: 'Compromiso con la Naturaleza',
+    texto: 'Responsables con la construcción de una sociedad justa, democrática y cuidadosa del ambiente.',
+    color: 'bg-verde',
+  },
+];
+---
+
+<Hero />
+
+<section class="pt-14 pb-20 md:pt-20 md:pb-28" aria-labelledby="propuesta-titulo">
+  <div class="contenedor">
+    <div class="grid gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
+      <h2 id="propuesta-titulo" class="titulo-seccion text-titulo">Del aula a la comunidad</h2>
+      <div class="space-y-5 text-lg">
+        <p>
+          Ofrecemos una formación académica sólida, con la propuesta de llevar lo aprendido en el aula a proyectos
+          reales junto a la comunidad de nuestra ciudad.
+        </p>
+        <p>
+          Buscamos que nuestros estudiantes sepan gestionar sus emociones, ponerse en el lugar del otro y entender el
+          mundo como un sistema. Que piensen con autonomía y criterio propio, y se comprometan con una sociedad justa,
+          empática y ambientalmente responsable.
+        </p>
+        <p class="text-tinta-suave">
+          Desde el nivel inicial hasta el secundario, trabajamos de forma articulada a través de proyectos compartidos,
+          para que cada estudiante recorra su escolaridad con continuidad. Hoy somos un equipo
+          interdisciplinario de <strong class="text-tinta">más de 120 personas</strong> entre conducción, docentes y no
+          docentes.
+        </p>
+      </div>
+    </div>
+
+    <ul class="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        ejes.map((eje) => (
+          <li class="border-t-4 border-tinta/10 pt-5 relative">
+            <span class:list={['absolute -top-1 left-0 h-1 w-16', eje.color]} aria-hidden="true" />
+            <h3 class="text-2xl">{eje.titulo}</h3>
+            <p class="mt-2 text-tinta-suave">{eje.texto}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<section id="niveles" aria-labelledby="niveles-titulo">
+  <div class="contenedor pb-12 md:pb-16">
+    <h2 id="niveles-titulo" class="titulo-seccion text-titulo max-w-3xl" set:html={acercarComas('Tres niveles, un mismo proyecto')} />
+    <p class="mt-5 max-w-2xl text-lg text-tinta-suave">
+      Ofrecemos una escolaridad completa, articulada en un mismo proyecto educativo.
+    </p>
+  </div>
+  {niveles.map((nivel, i) => <NivelBanda nivel={nivel} invertida={i % 2 === 1} />)}
+</section>
+
+<InstagramFeed />
+<Historia />
+<CtaPreinscripcion arriba="var(--color-superficie-alt)" />
+<Contacto />

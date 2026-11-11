@@ -1,0 +1,168 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaPreinscripcion from '../components/CtaPreinscripcion.astro';
+import Contacto from '../components/Contacto.astro';
+import { niveles, orientaciones, type Nivel } from '../data/levels';
+import { acercarComas } from '../lib/texto';
+
+export function getStaticPaths() {
+  return niveles.map((nivel) => ({ params: { nivel: nivel.slug }, props: { nivel } }));
+}
+
+interface Props {
+  nivel: Nivel;
+}
+const { nivel } = Astro.props;
+const esSecundario = nivel.param === 'secundario';
+const fotosExtra = nivel.fotos.slice(1);
+const colorVineta = { inicial: 'marker:text-inicial-marca', primario: 'marker:text-primario-marca', secundario: 'marker:text-secundario-marca' }[nivel.param];
+---
+
+<BaseLayout
+  tema={nivel.param}
+  titulo={nivel.seoTitulo}
+  descripcion={nivel.seoDescripcion}
+  migas={[{ nombre: nivel.nombre, href: `/${nivel.slug}/` }]}
+>
+  <section class:list={['banda', nivel.banda]} aria-labelledby="nivel-titulo">
+    <div class="contenedor pt-6 pb-16 md:pb-20">
+      <nav aria-label="Ruta de navegación" class="text-sm font-semibold">
+        <ol class="flex gap-2">
+          <li><a href="/" class="underline underline-offset-4">Inicio</a></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page">{nivel.nombre}</li>
+        </ol>
+      </nav>
+
+      <div class="mt-10 grid items-center gap-10 md:grid-cols-[1.1fr_1fr] md:gap-14">
+        <div>
+          <p class="flex items-center gap-3 font-semibold text-xl text-[var(--banda-marca)]">
+            <span class="h-1 w-8 rounded-full bg-[var(--banda-marca)]" aria-hidden="true"></span>
+            {nivel.marca}
+          </p>
+          <h1 id="nivel-titulo" class="mt-2 text-[clamp(2.75rem,7vw,5.25rem)] font-extrabold tracking-[-0.045em]">{nivel.nombre}</h1>
+          <p class="mt-5 text-2xl font-semibold">{nivel.rango}</p>
+          <a href={`/inscripciones/?nivel=${nivel.param}`} class="boton boton-primario mt-8">
+            Completar la preinscripción
+          </a>
+        </div>
+        <Picture
+          src={nivel.fotos[0].src}
+          alt={nivel.fotos[0].alt}
+          formats={['avif', 'webp']}
+          widths={[480, 800, 1200, 1440]}
+          width={1440}
+          height={1080}
+          fit="cover"
+          quality="high"
+          sizes="(min-width: 768px) 520px, 100vw"
+          loading="eager"
+          fetchpriority="high"
+          class="foto-mural w-full aspect-[4/3]"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 md:py-24" aria-label="Presentación">
+    <div class:list={['contenedor grid gap-10 md:items-center md:gap-16', fotosExtra.length && 'md:grid-cols-2']}>
+      <div class:list={['space-y-5 text-xl leading-relaxed', !fotosExtra.length && 'max-w-3xl']}>
+        {nivel.intro.map((p) => <p>{p}</p>)}
+      </div>
+      {
+        fotosExtra.length === 1 && (
+          <Picture
+            src={fotosExtra[0].src}
+            alt={fotosExtra[0].alt}
+            formats={['avif', 'webp']}
+            widths={[480, 800, 1200, 1440]}
+            width={1440}
+            height={1080}
+            fit="cover"
+            quality="high"
+            sizes="(min-width: 768px) 520px, 100vw"
+            class="foto-mural w-full aspect-[4/3] md:-rotate-1"
+          />
+        )
+      }
+      {
+        fotosExtra.length > 1 && (
+          <div class="grid grid-cols-2 gap-4 items-start">
+            {fotosExtra.slice(0, 2).map((foto, i) => (
+              <Picture
+                src={foto.src}
+                alt={foto.alt}
+                formats={['avif', 'webp']}
+                widths={[320, 600, 810]}
+                width={810}
+                height={1080}
+                fit="cover"
+                quality="high"
+                sizes="(min-width: 768px) 260px, 50vw"
+                class:list={['foto-mural w-full aspect-[3/4]', i === 1 && 'mt-10']}
+              />
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="bg-superficie-alt py-20 md:py-28" aria-labelledby="perfil-titulo">
+    <div class="contenedor">
+      <h2 id="perfil-titulo" class="titulo-seccion text-titulo max-w-3xl" set:html={acercarComas(nivel.perfilTitulo)} />
+      <div class="mt-12 grid gap-x-12 gap-y-12 md:grid-cols-2">
+        {
+          nivel.perfil.map((grupo) => (
+            <div>
+              <h3 class="text-3xl">{grupo.titulo}</h3>
+              <ul class:list={['mt-5 space-y-2.5 list-disc pl-5 marker:text-xl', colorVineta]}>
+                {grupo.items.map((item) => <li class="pl-1">{item}</li>)}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {
+    esSecundario && (
+      <section class="py-20 md:py-28" aria-labelledby="orientaciones-titulo">
+        <div class="contenedor">
+          <h2 id="orientaciones-titulo" class="titulo-seccion text-titulo">Dos orientaciones</h2>
+          <p class="mt-5 max-w-2xl text-lg text-tinta-suave">
+            El título es de Bachiller, con orientación en Ciencias Naturales o en Ciencias Sociales. Además del perfil
+            general, cada orientación suma lo suyo.
+          </p>
+          <div class="mt-12 grid gap-6 md:grid-cols-2">
+            {orientaciones.map((o, i) => (
+              <article class:list={['rounded-[var(--radius-mural)] p-8 md:p-10', i === 0 ? 'bg-tinte-1' : 'bg-tinte-2']}>
+                <h3 class="text-[clamp(1.75rem,3.2vw,2.25rem)]">{o.corto}</h3>
+                <p class="mt-1 font-semibold text-tinta-suave">{o.nombre}</p>
+                <ul class="mt-6 space-y-3 list-disc pl-5 marker:text-verde">
+                  {o.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </article>
+            ))}
+          </div>
+
+          <div class="mt-16 grid gap-6 md:grid-cols-[auto_1fr] md:items-center md:gap-12 border-t-4 border-titulo pt-10">
+            <p class="font-display text-[clamp(3rem,7vw,5rem)] font-extrabold tracking-[-0.05em] leading-none text-titulo">2030</p>
+            <div>
+              <h3 class="text-3xl">Secundaria 2030</h3>
+              <p class="mt-3 max-w-2xl text-lg">
+                Desde 2019 los espacios curriculares se integran en proyectos, y los tiempos y espacios de aprendizaje se
+                vuelven más flexibles.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaPreinscripcion arriba={esSecundario ? 'var(--color-superficie)' : 'var(--color-superficie-alt)'} nivel={nivel.param} titulo={`Preinscripción al ${nivel.nombre}`} />
+  <Contacto titulo="¿Tenés dudas?" />
+</BaseLayout>

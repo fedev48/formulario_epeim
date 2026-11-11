@@ -1,0 +1,51 @@
+---
+import { site, direccionCompleta, mapa } from '../data/site';
+
+interface Props {
+  titulo?: string;
+}
+const { titulo = 'Vení a conocernos' } = Astro.props;
+
+const datos = [
+  { termino: 'Dirección', valor: direccionCompleta },
+  { termino: 'Atención presencial', valor: site.horarioAtencion },
+  { termino: 'WhatsApp', valor: site.whatsapp.texto, href: site.whatsapp.url },
+  { termino: 'Correo', valor: site.email, href: `mailto:${site.email}` },
+  ...(site.instagram ? [{ termino: 'Instagram', valor: `@${site.instagram.usuario}`, href: site.instagram.url }] : []),
+  ...(site.facebook ? [{ termino: 'Facebook', valor: site.facebook.nombre, href: site.facebook.url }] : []),
+];
+---
+
+<section id="contacto" class="py-20 md:py-28" aria-labelledby="contacto-titulo">
+  <div class="contenedor grid gap-10 lg:grid-cols-[1fr_1.35fr] lg:gap-16">
+    <div>
+      <h2 id="contacto-titulo" class="titulo-seccion text-titulo">{titulo}</h2>
+      <p class="mt-5 text-lg text-tinta-suave max-w-md">
+        Si querés conocer la escuela o tenés dudas sobre la inscripción, escribinos por WhatsApp o por correo, o acercate.
+      </p>
+      <dl class="mt-8 divide-y divide-tinta/10 border-y border-tinta/10">
+        {
+          datos.map((d) => (
+            <div class="grid grid-cols-[9rem_1fr] gap-4 py-4 max-sm:grid-cols-1 max-sm:gap-1">
+              <dt class="font-semibold text-tinta-suave">{d.termino}</dt>
+              <dd class="font-semibold break-words">
+                {d.href ? <a class="enlace" href={d.href}>{d.valor}</a> : d.valor}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+      <a href={mapa.comoLlegar} class="boton boton-borde text-titulo mt-8" rel="noopener">Cómo llegar en Google Maps</a>
+    </div>
+
+    <div class="relative min-h-[22rem] lg:min-h-0 overflow-hidden rounded-[var(--radius-mural)] bg-superficie-alt">
+      <iframe
+        src={mapa.embed}
+        title={`Mapa: ${direccionCompleta}`}
+        class="absolute inset-0 size-full border-0"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+</section>

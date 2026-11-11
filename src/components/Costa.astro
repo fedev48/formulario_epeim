@@ -1,0 +1,23 @@
+---
+// La diagonal del escudo: arriba el color de la sección anterior, después la franja de mar,
+// la de tierra y abajo el color de la sección siguiente.
+interface Props {
+  arriba?: string; // color CSS o 'transparent'
+  abajo: string;
+  invertida?: boolean;
+  class?: string;
+}
+const { arriba = 'transparent', abajo, invertida = false, class: clase = '' } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 1440 130"
+  preserveAspectRatio="none"
+  aria-hidden="true"
+  class:list={['block w-full h-12 md:h-24', invertida && '-scale-x-100', clase]}
+>
+  <polygon points="0,0 1440,0 1440,7 0,71" fill={arriba}></polygon>
+  <polygon points="0,70 1440,6 1440,31 0,95" fill="var(--color-costa-1)"></polygon>
+  <polygon points="0,94 1440,30 1440,49 0,113" fill="var(--color-costa-2)"></polygon>
+  <polygon points="0,112 1440,48 1440,130 0,130" fill={abajo}></polygon>
+</svg>

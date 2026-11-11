@@ -1,0 +1,8 @@
+{
+  "posts": [
+    { "id": "mock1", "permalink": "https://www.instagram.com/", "caption": "Ejemplo de desarrollo: este contenido lo reemplaza el feed real de Instagram.", "type": "IMAGE", "image": "/og-image.jpg", "timestamp": "2026-11-05T15:00:00+0000" },
+    { "id": "mock2", "permalink": "https://www.instagram.com/", "caption": "Ejemplo de desarrollo: video.", "type": "VIDEO", "image": "/media/hero-poster.jpg", "timestamp": "2026-11-02T15:00:00+0000" },
+    { "id": "mock3", "permalink": "https://www.instagram.com/", "caption": "", "type": "CAROUSEL_ALBUM", "image": "/og-image.jpg", "timestamp": "2026-10-28T15:00:00+0000" },
+    { "id": "mock4", "permalink": "https://www.instagram.com/", "caption": "Ejemplo de desarrollo.", "type": "IMAGE", "image": "/media/hero-poster.jpg", "timestamp": "2026-10-20T15:00:00+0000" }
+  ]
+}

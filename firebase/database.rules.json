@@ -1,0 +1,20 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "students": {
+      "$id": {
+        ".write": "!data.exists() && newData.exists()",
+        ".validate": "$id.length <= 120 && newData.hasChildren(['Estudiante_inscripto', 'Nivel', 'Grado', 'blob', 'Fecha'])",
+        "Estudiante_inscripto": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 120"
+        },
+        "Nivel": { ".validate": "newData.isString() && newData.val().length <= 40" },
+        "Grado": { ".validate": "newData.isString() && newData.val().length <= 40" },
+        "blob": { ".validate": "newData.isString() && newData.val().length <= 5000000" },
+        "Fecha": { ".validate": "newData.val() == now" },
+        "$other": { ".validate": false }
+      }
+    }
+  }
+}

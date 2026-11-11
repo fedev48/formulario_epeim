@@ -1,0 +1,45 @@
+---
+import { Picture } from 'astro:assets';
+import type { Nivel } from '../data/levels';
+
+interface Props {
+  nivel: Nivel;
+  invertida?: boolean;
+}
+const { nivel, invertida = false } = Astro.props;
+const nombreCorto = { inicial: 'el Jardín', primario: 'la Primaria', secundario: 'la Secundaria' }[nivel.param];
+const destino = { inicial: 'al Jardín', primario: 'a la Primaria', secundario: 'a la Secundaria' }[nivel.param];
+---
+
+<article class:list={['banda', nivel.banda]} aria-labelledby={`banda-${nivel.param}`}>
+  <div class="contenedor grid items-center gap-8 py-14 md:py-20 md:grid-cols-2 md:gap-14">
+    <Picture
+      src={nivel.fotos[0].src}
+      alt={nivel.fotos[0].alt}
+      formats={['avif', 'webp']}
+      widths={[480, 800, 1200, 1440]}
+      width={1440}
+      height={1080}
+      fit="cover"
+      quality="high"
+      sizes="(min-width: 768px) 560px, 100vw"
+      class:list={['foto-mural w-full aspect-[4/3]', invertida && 'md:order-2']}
+    />
+    <div>
+      <p class="flex items-center gap-3 font-semibold text-lg text-[var(--banda-marca)]">
+        <span class="h-1 w-8 rounded-full bg-[var(--banda-marca)]" aria-hidden="true"></span>
+        {nivel.marca}
+      </p>
+      <h3 id={`banda-${nivel.param}`} class="mt-3 text-[clamp(2.125rem,4.2vw,3.25rem)]">
+        {nivel.nombre}
+      </h3>
+      <p class="mt-3 text-xl font-semibold">{nivel.rango}</p>
+      <p class="mt-4 max-w-lg opacity-90">{nivel.resumen}</p>
+      <!-- Las tres bandas igual: en pantallas anchas botón y link en una fila; si no, uno debajo del otro. -->
+      <div class="mt-7 flex flex-col items-start gap-4 xl:flex-row xl:items-center xl:gap-6">
+        <a href={`/${nivel.slug}/`} class="boton boton-borde whitespace-nowrap">Conocer {nombreCorto}</a>
+        <a href={`/inscripciones/?nivel=${nivel.param}`} class="enlace whitespace-nowrap">Preinscribirme {destino}</a>
+      </div>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,51 @@
+name: Publicar sitio
+
+# Cada push a `codigo` compila el sitio y deja el resultado en `main`, la rama que Ferozo (DonWeb)
+# clona en public_html. Se agrega un commit encima de `main`, así se puede volver a cualquier
+# versión anterior.
+on:
+  push:
+    branches: [codigo]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publicar
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Dejar el sitio compilado en main
+        env:
+          # El mensaje va por variable de entorno: si tuviera comillas, no rompe el comando.
+          MENSAJE: ${{ github.event.head_commit.message || 'publicación manual' }}
+        run: |
+          git fetch origin main
+          git worktree add sitio origin/main
+          # main queda igual a dist/ (se borra todo lo demás, menos .git).
+          find sitio -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a dist/. sitio/
+          cd sitio
+          git add -A
+          if git diff --cached --quiet; then
+            echo "El sitio compilado no cambió."
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "Publicar ${GITHUB_SHA::7}: ${MENSAJE%%$'\n'*}"
+          git push origin HEAD:main

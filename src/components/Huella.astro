@@ -1,0 +1,14 @@
+---
+// Huella de un pie. Por defecto es el derecho; `izquierda` la espeja.
+import { PLANTA, DEDOS } from '../lib/huella';
+interface Props {
+  class?: string;
+  izquierda?: boolean;
+}
+const { class: clase = '', izquierda = false } = Astro.props;
+---
+
+<svg viewBox="0 0 40 60" aria-hidden="true" class:list={[clase, izquierda && '-scale-x-100']} fill="currentColor">
+  <path d={PLANTA} />
+  {DEDOS.map((d) => <ellipse cx={d.cx} cy={d.cy} rx={d.rx} ry={d.ry} />)}
+</svg>

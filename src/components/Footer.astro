@@ -1,0 +1,43 @@
+---
+import { Image } from 'astro:assets';
+import logoEpeim from '../assets/logos/epeim.png';
+import { site, direccionCompleta, navegacion } from '../data/site';
+import { niveles } from '../data/levels';
+---
+
+<footer class="bg-pie-fondo text-pie-texto banda">
+  <div class="contenedor py-14 grid gap-10 md:grid-cols-[1.3fr_1fr_1fr]">
+    <div>
+      <span class="bg-white rounded-2xl p-2 inline-flex">
+        <Image src={logoEpeim} alt="EPEIM" width={120} class="h-20 w-auto" />
+      </span>
+      <p class="mt-5 max-w-sm opacity-90">{site.slogan}.</p>
+    </div>
+
+    <nav aria-label="Pie de página">
+      <h2 class="font-display text-xl">El sitio</h2>
+      <ul class="mt-3 space-y-2 opacity-90">
+        <li><a class="hover:underline underline-offset-4" href="/">Inicio</a></li>
+        {niveles.map((n) => <li><a class="hover:underline underline-offset-4" href={`/${n.slug}/`}>{n.nombre}</a></li>)}
+        {navegacion.map((item) => <li><a class="hover:underline underline-offset-4" href={item.href}>{item.texto}</a></li>)}
+        <li><a class="hover:underline underline-offset-4" href="/inscripciones/">Preinscripción</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <h2 class="font-display text-xl">Contacto</h2>
+      <address class="mt-3 not-italic space-y-2 opacity-90">
+        <p>{direccionCompleta}</p>
+        <p><a class="hover:underline underline-offset-4" href={site.whatsapp.url}>WhatsApp {site.whatsapp.texto}</a></p>
+        <p><a class="hover:underline underline-offset-4 whitespace-nowrap" href={`mailto:${site.email}`}>{site.email}</a></p>
+        {site.instagram && <p><a class="hover:underline underline-offset-4" href={site.instagram.url}>Instagram</a></p>}
+        {site.facebook && <p><a class="hover:underline underline-offset-4" href={site.facebook.url}>Facebook</a></p>}
+      </address>
+    </div>
+  </div>
+  <div class="border-t border-pie-texto/15">
+    <p class="contenedor py-5 text-sm opacity-75">
+      © {new Date().getFullYear()} {site.nombreLargo}. Río Grande, Tierra del Fuego.
+    </p>
+  </div>
+</footer>

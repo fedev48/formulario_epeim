@@ -1,0 +1,508 @@
+/* Preinscripción: la página toma los colores y motivos del nivel elegido (html[data-nivel]).
+   Antes de elegir es EPEIM: banda verde con el sol del escudo.
+   Jardín: huellas. Primaria: letras y números. Secundaria: un gráfico con nodos. */
+
+:root {
+  --nivel-fondo: var(--color-cta-fondo);
+  --nivel-texto: var(--color-cta-texto);
+  --nivel-color: var(--color-verde);
+  --nivel-sobre: #fff;
+  --nivel-borde: var(--color-verde);
+  /* Color de los dibujos del encabezado. Va fijo por nivel y no sale del color del texto: ese color
+     tiene transición, y la primera vez los dibujos aparecían blancos mientras pasaba a oscuro. */
+  --nivel-deco: rgb(255 255 255 / 0.14);
+}
+html[data-nivel] { --nivel-deco: color-mix(in srgb, var(--color-tinta) 14%, transparent); }
+html[data-nivel='1'] {
+  --nivel-fondo: var(--color-inicial-fondo);
+  --nivel-texto: var(--color-inicial-texto);
+  --nivel-color: var(--color-tierra);
+  --nivel-borde: var(--color-inicial-marca);
+}
+html[data-nivel='2'] {
+  --nivel-fondo: var(--color-primario-fondo);
+  --nivel-texto: var(--color-primario-texto);
+  --nivel-color: var(--color-sol);
+  --nivel-sobre: var(--color-tinta);
+  --nivel-borde: var(--color-primario-marca);
+}
+html[data-nivel='3'] {
+  --nivel-fondo: var(--color-secundario-fondo);
+  --nivel-texto: var(--color-secundario-texto);
+  --nivel-color: var(--color-verde);
+  --nivel-borde: var(--color-secundario-marca);
+}
+
+/* ---------- Encabezado ---------- */
+.pre-banda {
+  background-color: var(--nivel-fondo);
+  color: var(--nivel-texto);
+  transition: background-color 0.6s ease, color 0.6s ease;
+}
+/* Los dibujos usan los mismos límites que el contenido (.contenedor): en pantallas anchas no se
+   van al borde de la pantalla. */
+.pre-deco {
+  position: absolute;
+  inset: 0;
+  max-width: 76rem;
+  margin-inline: auto;
+  z-index: -1;
+  color: var(--nivel-deco);
+  pointer-events: none;
+}
+.pre-deco > [data-deco] { display: none; }
+html:not([data-nivel]) [data-deco='0'],
+html[data-nivel='1'] [data-deco='1'],
+html[data-nivel='2'] [data-deco='2'],
+html[data-nivel='3'] [data-deco='3'] { display: block; }
+
+@keyframes pop {
+  0% { scale: 1.8; opacity: 0; }
+  60% { scale: 0.9; opacity: 1; }
+  100% { scale: 1; }
+}
+
+/* EPEIM: medio sol del escudo asomando desde abajo; los rayos cruzan todo el encabezado y se
+   desvanecen. Sale, abre los rayos y después se balancea despacio. Amarillo muy suave sobre el verde. */
+.deco-sol {
+  position: absolute;
+  right: -1rem;
+  bottom: 0;
+  width: 15rem;
+  overflow: visible;
+  color: color-mix(in srgb, var(--color-sol) 15%, transparent);
+}
+.sol { animation: sol-sale 1s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.sol-rayos {
+  transform-box: view-box;
+  transform-origin: 130px 150px;
+  animation: sol-gira 16s ease-in-out 1.6s infinite;
+}
+.sol-rayos g {
+  transform-box: view-box;
+  transform-origin: 130px 150px;
+  animation: rayo 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(0.4s + var(--i) * 0.08s);
+}
+@keyframes sol-sale { from { translate: 0 50px; } }
+@keyframes rayo { from { scale: 0.15; opacity: 0; } }
+@keyframes sol-gira {
+  0%, 100% { rotate: 0deg; }
+  50% { rotate: 5deg; }
+}
+
+/* Jardín: un rastro de pasos que cruza el encabezado. */
+.deco-pisadas {
+  position: absolute;
+  right: -1rem;
+  bottom: 0.5rem;
+  gap: 0.9rem;
+  rotate: -6deg;
+}
+html[data-nivel='1'] .deco-pisadas { display: flex; }
+.huella-hero {
+  width: 2.6rem;
+  height: 1.75rem;
+  translate: 0 var(--y);
+  animation: pop 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  animation-delay: calc(0.2s + var(--i) * 0.14s);
+}
+
+/* Primaria: letras y números que aparecen como en un pizarrón. */
+.deco-letras {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.75rem;
+  width: 18rem;
+  height: 7rem;
+}
+.deco-letras span {
+  position: absolute;
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1;
+  animation: pop 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  animation-delay: calc(0.15s + var(--i) * 0.09s);
+}
+
+/* Secundaria: un gráfico que se dibuja sobre papel cuadriculado. */
+.deco-grafico {
+  position: absolute;
+  right: -1rem;
+  bottom: 0.5rem;
+  width: 17rem;
+}
+.deco-grafico polyline {
+  stroke-dasharray: 1;
+  animation: trazo 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+.deco-grafico circle[style] {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pop 0.4s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  animation-delay: calc(0.25s + var(--i) * 0.14s);
+}
+@keyframes trazo { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+@media (min-width: 768px) {
+  .deco-sol { right: 12%; width: 20rem; }
+  .deco-pisadas { right: 2rem; bottom: 3rem; gap: 2rem; rotate: -10deg; }
+  .huella-hero { width: 4.5rem; height: 3rem; }
+  .deco-letras { right: 3rem; bottom: 2rem; width: 28rem; height: 10rem; }
+  .deco-grafico { right: 3rem; bottom: 2rem; width: 26rem; }
+}
+
+/* ---------- Elegir el nivel ---------- */
+.elegir-nivel legend { padding: 0; }
+.nivel-opcion {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  padding: 1.25rem 1.25rem 1.4rem;
+  border-radius: 1.25rem;
+  background: #fff;
+  border: 2px solid rgb(13 43 27 / 0.1);
+  transition: border-color 0.2s ease, background-color 0.3s ease, translate 0.2s ease, box-shadow 0.2s ease;
+}
+.nivel-opcion:hover { translate: 0 -2px; box-shadow: 0 10px 24px -14px rgb(13 43 27 / 0.45); }
+.nivel-opcion:has(:focus-visible) { outline: 3px solid var(--color-titulo); outline-offset: 3px; }
+.nivel-opcion-inicial { --opcion-fondo: var(--color-inicial-fondo); --opcion-marca: var(--color-inicial-marca); }
+.nivel-opcion-primario { --opcion-fondo: var(--color-primario-fondo); --opcion-marca: var(--color-primario-marca); }
+.nivel-opcion-secundario { --opcion-fondo: var(--color-secundario-fondo); --opcion-marca: var(--color-secundario-marca); }
+.nivel-opcion:has(:checked) {
+  background: var(--opcion-fondo);
+  border-color: var(--opcion-marca);
+}
+.nivel-opcion:has(:checked)::after {
+  content: '';
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--opcion-marca) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 70% no-repeat;
+  animation: pop 0.35s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+.nivel-icono {
+  display: flex;
+  align-items: center;
+  height: 2.5rem;
+  color: var(--opcion-marca);
+}
+.nivel-icono svg { height: 100%; width: auto; }
+.icono-fichas { display: flex; gap: 0.25rem; }
+.icono-fichas span {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 0.45rem;
+  background: var(--color-sol);
+  color: var(--color-tinta);
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.icono-fichas span:nth-child(2) { rotate: -6deg; translate: 0 3px; }
+.icono-fichas span:nth-child(3) { rotate: 5deg; }
+
+.columna-formulario:has(#surveyElement[hidden]) .elegir-nivel { display: none; }
+.columna-formulario:has(#surveyElement[hidden]) .cuerpo-formulario { margin-top: 0; }
+.columna-formulario:has(#surveyElement[hidden]) .aviso-jornada { display: none; }
+
+/* Aviso de doble jornada: se despliega al elegir el Jardín. La altura se anima con grid-template-rows
+   y el contenido aparece un poco después; ya abierto, deja ver el globo aunque salga de la caja. */
+.aviso-jornada {
+  position: relative;
+  z-index: 35; /* el globo queda por encima del formulario y del recorrido flotante */
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s linear 0.45s;
+}
+.aviso-jornada-interior { min-height: 0; overflow: hidden; }
+.aviso-jornada-caja {
+  position: relative;
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1.25rem;
+  background: var(--color-tinte-1);
+  border-left: 6px solid var(--color-mar);
+  opacity: 0;
+  translate: 0 -8px;
+  transition: opacity 0.2s ease, translate 0.2s ease;
+}
+.aviso-jornada-icono {
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: 0.1rem;
+  color: color-mix(in srgb, var(--color-mar) 55%, var(--color-tinta));
+}
+html[data-nivel='1'] .aviso-jornada {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s;
+}
+html[data-nivel='1'] .aviso-jornada-interior { overflow: visible; }
+html[data-nivel='1'] .aviso-jornada-caja {
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity 0.35s ease 0.2s, translate 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) 0.2s;
+}
+html[data-nivel='1'] .aviso-jornada-icono { animation: reloj 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) 0.35s both; }
+@keyframes reloj { from { rotate: -90deg; scale: 0.4; } }
+
+/* Globo flotante: se abre al pasar el mouse, al enfocar o al tocar "Más información". */
+.globo-ancla { position: static; }
+.globo {
+  position: absolute;
+  z-index: 20;
+  left: 1rem;
+  right: 1rem;
+  top: calc(100% + 0.6rem);
+  padding: 0.9rem 1.1rem;
+  border-radius: 1rem;
+  background: var(--color-tinta);
+  color: #fff;
+  font-size: 0.975rem;
+  line-height: 1.5;
+  box-shadow: 0 16px 36px -14px rgb(13 43 27 / 0.6);
+  animation: globo 0.25s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+.globo::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: var(--flecha, 2rem);
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  rotate: 45deg;
+}
+@keyframes globo { from { opacity: 0; translate: 0 -6px; scale: 0.97; } }
+@media (min-width: 640px) {
+  .globo { left: auto; right: 1.25rem; width: 22rem; }
+}
+
+/* Hasta elegir el nivel, el formulario se ve gris y desenfocado (y es inert, ver nivel.js). */
+.cuerpo-formulario { cursor: default; }
+html:not([data-nivel]) .cuerpo-formulario { cursor: pointer; }
+.cuerpo-formulario > [data-hasta-elegir] {
+  transition: filter 0.5s ease, opacity 0.5s ease;
+}
+html:not([data-nivel]) .cuerpo-formulario > [data-hasta-elegir] {
+  filter: grayscale(1) blur(2px);
+  opacity: 0.45;
+  user-select: none;
+}
+
+/* Pista: aparece a los 5 s sin elegir nivel, con una flecha que señala las tarjetas. */
+.pista-nivel {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: fit-content;
+  margin: 1rem auto 0;
+  padding: 0.6rem 1.1rem 0.6rem 0.8rem;
+  border-radius: 999px;
+  background: var(--color-titulo);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 10px 24px -12px rgb(13 43 27 / 0.6);
+  animation: pista-entra 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+.pista-nivel[hidden] { display: none; }
+.pista-nivel svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  animation: flecha 1s ease-in-out 0.5s infinite;
+}
+@keyframes pista-entra { from { opacity: 0; translate: 0 10px; scale: 0.9; } }
+@keyframes flecha {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -5px; }
+}
+
+/* Esqueleto mientras se descarga el formulario. */
+.esqueleto-titulo,
+.esqueleto-campo span {
+  border-radius: 0.5rem;
+  background: linear-gradient(90deg, rgb(13 43 27 / 0.07) 30%, rgb(13 43 27 / 0.13) 50%, rgb(13 43 27 / 0.07) 70%) 0 0 / 300% 100%;
+  animation: brillo 1.4s ease-in-out infinite;
+}
+.esqueleto-titulo { width: 16rem; max-width: 70%; height: 1.75rem; }
+.esqueleto-tarjeta {
+  display: grid;
+  gap: 1.5rem 2.5rem;
+  margin-top: 1.5rem;
+  padding: 2rem 2.5rem;
+  border-radius: 1rem;
+  background: #fff;
+}
+@media (min-width: 640px) { .esqueleto-tarjeta { grid-template-columns: 1fr 1fr; } }
+.esqueleto-campo { display: grid; gap: 0.6rem; }
+.esqueleto-campo span:first-child { width: 40%; height: 0.9rem; }
+.esqueleto-campo span:last-child { height: 2.75rem; }
+@keyframes brillo { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+/* Si se intenta enviar sin elegir el nivel. */
+.nivel-error {
+  margin-top: 0.75rem;
+  font-weight: 700;
+  color: var(--color-tierra-oscuro);
+}
+.elegir-nivel[aria-invalid='true'] .nivel-opcion { border-color: var(--color-tierra); }
+.elegir-nivel[aria-invalid='true'] { animation: sacudir 0.4s ease; }
+@keyframes sacudir {
+  20%, 60% { translate: -6px 0; }
+  40%, 80% { translate: 6px 0; }
+}
+
+/* ---------- Recorrido: marcas por nivel ---------- */
+/* Antes de elegir el nivel: puntos verdes de EPEIM. */
+.marca-punto {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background: rgb(13 43 27 / 0.13);
+}
+.marca-punto[data-hecha] { background: var(--nivel-color); }
+.rastro-chico .marca-punto { width: 0.55rem; height: 0.55rem; }
+.rastro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.35rem;
+  min-height: 1.75rem;
+  align-items: center;
+}
+.marca[data-hecha],
+.marca.festejo {
+  animation: pop 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+.marca.festejo { animation-delay: calc(0.15s + var(--i) * 0.11s); }
+
+.marca-pie {
+  width: 1.8rem;
+  height: 1.2rem;
+  color: rgb(13 43 27 / 0.13);
+  translate: 0 var(--y, 0);
+}
+.marca-pie[data-hecha],
+.marca-pie.festejo,
+.marca-pie.cargando { color: var(--nivel-color); }
+
+.marca-ficha {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 0.4rem;
+  border: 2px dashed rgb(13 43 27 / 0.2);
+  color: rgb(13 43 27 / 0.35);
+  font-weight: 800;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+.marca-ficha:nth-child(odd) { rotate: -3deg; }
+.marca-ficha:nth-child(even) { rotate: 3deg; }
+.marca-ficha[data-hecha],
+.marca-ficha.festejo,
+.marca-ficha.cargando {
+  border: 2px solid var(--nivel-borde);
+  background: var(--nivel-color);
+  color: var(--nivel-sobre);
+}
+.marca-ficha.festejo { width: 2.1rem; height: 2.1rem; font-size: 1.1rem; }
+
+.rastro:has(.marca-nodo) { gap: 0.6rem 0.9rem; }
+.marca-nodo {
+  position: relative;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  border: 2px solid rgb(13 43 27 / 0.22);
+  background: #fff;
+}
+.marca-nodo + .marca-nodo::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 2px);
+  width: 0.9rem;
+  height: 2px;
+  translate: 0 -50%;
+  background: rgb(13 43 27 / 0.15);
+  transform-origin: left;
+}
+.marca-nodo[data-hecha],
+.marca-nodo.festejo,
+.marca-nodo.cargando {
+  border-color: var(--nivel-color);
+  background: var(--nivel-color);
+}
+.marca-nodo[data-hecha]::before,
+.marca-nodo.festejo::before {
+  background: var(--nivel-color);
+  animation: linea 0.35s ease both;
+}
+@keyframes linea { from { transform: scaleX(0); } }
+
+/* Enviando: las marcas se encienden una tras otra. */
+.marca.cargando { animation: cargando 1.2s ease-in-out infinite; animation-delay: calc(var(--i) * 0.2s); }
+@keyframes cargando {
+  0%, 100% { opacity: 0.2; scale: 0.9; }
+  30% { opacity: 1; scale: 1; }
+  60% { opacity: 0.2; }
+}
+
+.tramo-cuenta { transition: color 0.3s ease; }
+.tramo[data-completo] .tramo-cuenta { color: var(--color-titulo); }
+
+/* En el celular, el recorrido flota abajo mientras se completa el formulario. */
+.recorrido-movil {
+  position: sticky;
+  bottom: 0.75rem;
+  z-index: 30;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 1.25rem;
+  background: rgb(255 255 255 / 0.94);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 0 1px rgb(13 43 27 / 0.07), 0 10px 30px -12px rgb(13 43 27 / 0.35);
+}
+#surveyElement[hidden] + .recorrido-movil { display: none; }
+.rastro-chico { gap: 0.25rem 0.2rem; min-height: 1.1rem; }
+.rastro-chico .marca-pie { width: 1.05rem; height: 0.7rem; }
+.rastro-chico .marca-ficha { width: 1.05rem; height: 1.05rem; font-size: 0.6rem; border-radius: 0.25rem; border-width: 1.5px; }
+.rastro-chico:has(.marca-nodo) { gap: 0.25rem 0.45rem; }
+.rastro-chico .marca-nodo { width: 0.65rem; height: 0.65rem; border-width: 1.5px; }
+.rastro-chico .marca-nodo + .marca-nodo::before { width: 0.45rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pre-banda, .pre-banda *, .marca, .marca::before, .nivel-opcion, .nivel-opcion::after,
+  .elegir-nivel, .aviso-jornada, .aviso-jornada *, .globo, .pista-nivel, .pista-nivel svg,
+  .esqueleto *, .cuerpo-formulario > * { animation: none !important; transition: none !important; }
+  .marca.cargando { opacity: 0.6; }
+}
+
+/* En el celular, las tarjetas de nivel van con el ícono al costado para ocupar menos alto. */
+@media (max-width: 639px) {
+  .nivel-opcion {
+    display: grid;
+    grid-template-columns: 3.25rem 1fr;
+    column-gap: 0.9rem;
+    align-items: center;
+    padding: 0.9rem 3rem 0.9rem 1rem;
+  }
+  .nivel-icono { grid-row: span 2; height: 2rem; justify-content: center; }
+  .nivel-opcion > span:nth-of-type(2) { margin-top: 0; align-self: end; }
+  .nivel-opcion > span:nth-of-type(3) { margin-top: 0.1rem; align-self: start; }
+  .icono-fichas span { width: 1.35rem; height: 1.35rem; font-size: 0.8rem; border-radius: 0.35rem; }
+  .icono-fichas { gap: 0.1rem; }
+  .nivel-opcion:has(:checked)::after { top: 50%; translate: 0 -50%; }
+}

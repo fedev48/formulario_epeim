@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Huella from '../components/Huella.astro';
+import { niveles } from '../data/levels';
+---
+
+<BaseLayout titulo="Página no encontrada" descripcion="La página que buscás no existe o cambió de dirección." noindex>
+  <section class="contenedor py-24 md:py-32">
+    <div class="flex gap-3 text-tierra" aria-hidden="true">
+      <Huella class="w-8 h-auto" izquierda />
+      <Huella class="w-8 h-auto translate-y-4" />
+    </div>
+    <h1 class="mt-8 text-[clamp(2.5rem,6vw,4.5rem)] text-titulo max-w-[14ch]">Por acá no hay huellas</h1>
+    <p class="mt-6 text-xl max-w-xl">La página que buscás no existe o cambió de dirección. Probá con alguna de estas:</p>
+    <ul class="mt-8 flex flex-wrap gap-3">
+      <li><a class="boton bg-tinta text-white hover:bg-verde-oscuro" href="/">Ir al inicio</a></li>
+      {niveles.map((n) => <li><a class="boton boton-borde text-titulo" href={`/${n.slug}/`}>{n.nombre}</a></li>)}
+      <li><a class="boton boton-primario" href="/inscripciones/">Preinscripción</a></li>
+    </ul>
+  </section>
+</BaseLayout>

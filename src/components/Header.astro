@@ -1,0 +1,168 @@
+---
+import { logoInline } from '../lib/logos';
+import { navegacion } from '../data/site';
+import { niveles } from '../data/levels';
+
+interface Props {
+  /** Color del header arriba de todo, para que se funda con el comienzo de la página. */
+  tema?: 'blanco' | 'hero' | 'verde' | 'inicial' | 'primario' | 'secundario';
+}
+const { tema = 'blanco' } = Astro.props;
+const oscuro = tema === 'hero' || tema === 'verde';
+
+const ruta = Astro.url.pathname;
+// En la página del jardín se muestra su logo; en el resto, el escudo de EPEIM.
+const enJardin = ruta.startsWith('/nivel-inicial/');
+const logo = enJardin
+  ? { ...(await logoInline('pasitos')), nombre: 'Jardín Pasitos Curiosos' }
+  : { ...(await logoInline('epeim')), nombre: 'EPEIM' };
+---
+
+<header class:list={['header', `header-${tema}`, oscuro && 'header-oscuro']} data-header>
+  <div class="header-isla">
+  <div class="contenedor header-barra flex items-center justify-between gap-4">
+    <a href="/" data-astro-prefetch="load" class="flex items-center shrink-0 w-14" aria-label={`${logo.nombre}, ir al inicio`}>
+      <img src={logo.src} alt="" width={logo.width} height={logo.height} class="header-logo w-auto" decoding="sync" style={`view-transition-name: logo-${enJardin ? 'pasitos' : 'epeim'}`} />
+    </a>
+
+    <nav aria-label="Principal" class="hidden lg:block">
+      <ul class="flex items-center gap-7 font-semibold">
+        <li>
+          <a href="/" data-astro-prefetch="load" class="relative underline-offset-8 decoration-2 hover:underline aria-[current=page]:no-underline" aria-current={ruta === '/' ? 'page' : undefined}>
+            Inicio{ruta === '/' && <span class="nav-indicador" aria-hidden="true" />}
+          </a>
+        </li>
+        {
+          niveles.map((n) => (
+            <li>
+              <a
+                href={`/${n.slug}/`}
+                data-astro-prefetch="load"
+                class="relative underline-offset-8 decoration-2 hover:underline aria-[current=page]:no-underline"
+                aria-current={ruta.startsWith(`/${n.slug}`) ? 'page' : undefined}
+              >
+                {n.corto}
+                {ruta.startsWith(`/${n.slug}`) && <span class="nav-indicador" aria-hidden="true" />}
+              </a>
+            </li>
+          ))
+        }
+        {
+          navegacion.map((item) => (
+            <li>
+              <a href={item.href} class="underline-offset-8 decoration-2 hover:underline">
+                {item.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a href="/inscripciones/" data-astro-prefetch="load" class="boton header-boton !min-h-11 !px-5 !text-base">Inscripciones</a>
+      <button
+        type="button"
+        class="lg:hidden inline-flex items-center justify-center size-11 rounded-full hover:bg-current/10"
+        aria-expanded="false"
+        aria-controls="menu-movil"
+        data-menu-boton
+      >
+        <span class="sr-only">Abrir menú</span>
+        <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" data-icono-abrir />
+          <path d="M6 6l12 12M18 6L6 18" data-icono-cerrar class="hidden" />
+        </svg>
+      </button>
+    </div>
+  </div>
+  <span class="header-progreso" aria-hidden="true"></span>
+  </div>
+
+  <nav id="menu-movil" aria-label="Menú" class="header-menu lg:hidden hidden" data-menu>
+    <ul class="px-5 py-3 text-lg font-semibold [&>li:last-child>a]:border-b-0">
+      <li>
+        <a href="/" class="flex py-3 border-b border-tinta/10" data-astro-prefetch="viewport" aria-current={ruta === '/' ? 'page' : undefined}>Inicio</a>
+      </li>
+      {
+        niveles.map((n) => (
+          <li>
+            <a href={`/${n.slug}/`} class="flex py-3 border-b border-tinta/10" data-astro-prefetch="viewport">
+              {n.nombre}
+              <span class="ml-auto font-normal text-tinta-suave text-base">{n.marca.replace('Primaria EPEIM', '').replace('Secundaria EPEIM', '')}</span>
+            </a>
+          </li>
+        ))
+      }
+      {
+        navegacion.map((item) => (
+          <li>
+            <a href={item.href} class="flex py-3 border-b border-tinta/10" data-astro-prefetch="viewport">
+              {item.texto}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]')!;
+  const boton = document.querySelector<HTMLButtonElement>('[data-menu-boton]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  if (boton && menu) {
+    const alternar = (abrir: boolean) => {
+      boton.setAttribute('aria-expanded', String(abrir));
+      boton.querySelector('.sr-only')!.textContent = abrir ? 'Cerrar menú' : 'Abrir menú';
+      boton.querySelector('[data-icono-abrir]')!.classList.toggle('hidden', abrir);
+      boton.querySelector('[data-icono-cerrar]')!.classList.toggle('hidden', !abrir);
+      menu.classList.toggle('hidden', !abrir);
+    };
+    boton.addEventListener('click', () => alternar(boton.getAttribute('aria-expanded') !== 'true'));
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) alternar(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && boton.getAttribute('aria-expanded') === 'true') {
+        alternar(false);
+        boton.focus();
+      }
+    });
+  }
+
+  // Al bajar aparece la isla flotante; arriba de todo vuelve a fundirse con la página. Solo depende
+  // de cuánto se bajó, así funciona igual en cualquier tamaño de pantalla.
+  // Contra el parpadeo: con scrolls cortos cerca de arriba (y la barra de direcciones del celular
+  // apareciendo y escondiéndose) el estado cambiaba varias veces por segundo. Ahora, después de cada
+  // cambio, el header se queda al menos ESPERA ms así; si después sigue correspondiendo el otro, cambia.
+  // La línea de abajo marca cuánto se leyó de la página.
+  const ESPERA = 350;
+  let ultimoCambio = 0;
+  let reintento = 0;
+  let pendiente = false;
+  const actualizar = () => {
+    pendiente = false;
+    const y = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    header.style.setProperty('--progreso', String(total > 0 ? Math.min(Math.max(y / total, 0), 1) : 0));
+    const flotante = header.classList.contains('header-flotante');
+    const deberia = flotante ? y > 8 : y > 40;
+    if (deberia === flotante) return;
+    const falta = ultimoCambio + ESPERA - performance.now();
+    if (falta > 0) {
+      clearTimeout(reintento);
+      reintento = setTimeout(actualizar, falta);
+      return;
+    }
+    header.classList.toggle('header-flotante', deberia);
+    ultimoCambio = performance.now();
+  };
+  addEventListener('scroll', () => {
+    if (!pendiente) {
+      pendiente = true;
+      requestAnimationFrame(actualizar);
+    }
+  }, { passive: true });
+  actualizar();
+</script>

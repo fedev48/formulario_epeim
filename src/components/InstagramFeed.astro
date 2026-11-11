@@ -1,0 +1,104 @@
+---
+import { site } from '../data/site';
+const endpoint = import.meta.env.PUBLIC_IG_ENDPOINT || '/api/instagram.php';
+const perfil = site.instagram;
+---
+
+<section id="novedades" class="py-20 md:py-28" aria-labelledby="novedades-titulo">
+  <div class="contenedor">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <h2 id="novedades-titulo" class="titulo-seccion text-titulo">Novedades</h2>
+        <p class="mt-4 text-lg text-tinta-suave">Lo último que compartimos en Instagram: actos, salidas, proyectos y el día a día en la escuela.</p>
+      </div>
+      {perfil && <a href={perfil.url} class="enlace text-titulo" rel="noopener">Ver más en Instagram (@{perfil.usuario})</a>}
+    </div>
+
+    <div data-ig data-endpoint={endpoint} class="mt-10">
+      <p class="sr-only" role="status" data-ig-estado>Cargando publicaciones de Instagram…</p>
+      <ul class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" data-ig-lista aria-busy="true">
+        {
+          [0, 1, 2, 3].map(() => (
+            <li class="aspect-square rounded-2xl bg-superficie-alt animate-pulse motion-reduce:animate-none" aria-hidden="true" />
+          ))
+        }
+      </ul>
+
+      <div data-ig-vacio hidden class="rounded-3xl bg-superficie-alt p-8 md:p-12 text-center">
+        <h3 class="font-display text-2xl md:text-3xl font-extrabold tracking-[-0.03em] text-titulo">Seguinos en Instagram</h3>
+        <p class="mt-3 text-tinta-suave max-w-md mx-auto">
+          Ahí compartimos lo que pasa en el jardín, la Primaria y la Secundaria.
+        </p>
+        {perfil && <a href={perfil.url} class="boton boton-borde text-titulo mt-6" rel="noopener">Ir a @{perfil.usuario}</a>}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  type Post = { id: string; permalink: string; caption: string; type: string; image: string; timestamp: string };
+
+  const raiz = document.querySelector<HTMLElement>('[data-ig]');
+  if (raiz) {
+    const lista = raiz.querySelector<HTMLUListElement>('[data-ig-lista]')!;
+    const vacio = raiz.querySelector<HTMLElement>('[data-ig-vacio]')!;
+    const estado = raiz.querySelector<HTMLElement>('[data-ig-estado]')!;
+    const fecha = new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long', timeZone: 'America/Argentina/Ushuaia' });
+
+    const mostrarVacio = () => {
+      lista.remove();
+      vacio.hidden = false;
+      estado.textContent = 'No pudimos cargar las publicaciones de Instagram.';
+    };
+
+    const tarjeta = (post: Post) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = post.permalink;
+      a.rel = 'noopener';
+      a.className = 'group block';
+      const marco = document.createElement('div');
+      marco.className = 'relative aspect-square overflow-hidden rounded-2xl bg-superficie-alt';
+      const img = document.createElement('img');
+      img.src = post.image;
+      img.alt = post.caption ? '' : 'Publicación de Instagram';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.className = 'size-full object-cover transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none';
+      marco.append(img);
+      if (post.type === 'VIDEO') {
+        const etiqueta = document.createElement('span');
+        etiqueta.className = 'absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-white';
+        etiqueta.textContent = 'Video';
+        marco.append(etiqueta);
+      }
+      const pie = document.createElement('p');
+      pie.className = 'mt-3 text-sm text-tinta-suave';
+      const cuando = document.createElement('time');
+      cuando.dateTime = post.timestamp;
+      cuando.textContent = fecha.format(new Date(post.timestamp));
+      cuando.className = 'block font-semibold text-tinta';
+      pie.append(cuando);
+      if (post.caption) {
+        const texto = document.createElement('span');
+        texto.className = 'line-clamp-2';
+        texto.textContent = post.caption;
+        pie.append(texto);
+      }
+      a.append(marco, pie);
+      li.append(a);
+      return li;
+    };
+
+    fetch(raiz.dataset.endpoint!, { headers: { Accept: 'application/json' } })
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((datos: { posts?: Post[] }) => {
+        const posts = (datos.posts ?? []).slice(0, 4);
+        if (!posts.length) return mostrarVacio();
+        lista.replaceChildren(...posts.map(tarjeta));
+        lista.removeAttribute('aria-busy');
+        estado.textContent = 'Publicaciones de Instagram cargadas.';
+      })
+      .catch(mostrarVacio);
+  }
+</script>

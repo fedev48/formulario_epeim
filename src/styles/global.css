@@ -1,0 +1,349 @@
+@import '@fontsource-variable/plus-jakarta-sans';
+@import 'tailwindcss';
+
+/* Colores tomados de los logos: verde del escudo, sol, mar y la tierra roja de Pasitos/EPEIM. */
+@theme {
+  --color-papel: #ffffff;
+  --color-cielo: #eaf5fa;
+  --color-tinta: #0d2b1b;
+  --color-tinta-suave: #3d5a49;
+  --color-verde: #00652a;
+  --color-verde-oscuro: #00441c;
+  --color-sol: #fdcc1c;
+  --color-sol-claro: #fff3c4;
+  --color-mar: #62c2e6;
+  --color-tierra: #db3420;
+  --color-tierra-oscuro: #b3260f;
+
+  /* Tokens semánticos (paleta "intermedia"): fondos con tintes claros y verde profundo.
+     Los colores puros de arriba quedan para detalles: botones, íconos y marcas de nivel. */
+  --color-superficie: #ffffff;
+  --color-superficie-alt: #eaf2f5;
+  --color-texto: #12261b;
+  --color-texto-suave: #3d5a49;
+  --color-titulo: #1a5a36;
+  --color-boton: #00652a;
+  --color-boton-hover: #00441c;
+  --color-hero-velo: #163a26;
+  --color-costa-1: #9ed3e8;
+  --color-costa-2: #e0705e;
+  --color-tinte-1: #dceff6;
+  --color-tinte-2: #fcefc4;
+  --color-cta-fondo: #1a5a36;
+  --color-cta-texto: #ffffff;
+  --color-pie-fondo: #12261b;
+  --color-pie-texto: #ffffff;
+  --color-inicial-fondo: #f6d8cf;
+  --color-inicial-texto: #12261b;
+  --color-inicial-marca: #a3301b;
+  --color-primario-fondo: #fbe7a8;
+  --color-primario-texto: #12261b;
+  --color-primario-marca: #7a5300;
+  --color-secundario-fondo: #cfe5d6;
+  --color-secundario-texto: #12261b;
+  --color-secundario-marca: #1a5a36;
+
+  --font-display: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+
+  --radius-mural: 2.25rem 0.75rem 2.25rem 0.75rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+  body {
+    background: var(--color-superficie);
+    color: var(--color-texto);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+  }
+  /* 700 y no 800: en Plus Jakarta Sans la coma a 800 queda separada de la palabra. */
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  h3 { line-height: 1.15; letter-spacing: -0.02em; }
+  .coma { margin-left: -0.1em; }
+  p { text-wrap: pretty; }
+  :focus-visible {
+    outline: 3px solid var(--color-verde);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  .sobre-oscuro :focus-visible { outline-color: var(--color-sol); }
+  /* En bandas de color (claras u oscuras según la paleta) el foco toma el color del texto. */
+  .banda :focus-visible { outline-color: currentColor; }
+}
+
+@layer components {
+  .contenedor {
+    width: 100%;
+    max-width: 76rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .contenedor { padding-inline: 2rem; }
+  }
+
+  .titulo-seccion {
+    font-size: clamp(2.125rem, 4.6vw, 3.5rem);
+  }
+
+  .boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    line-height: 1.2;
+    text-decoration: none;
+    transition: transform 150ms ease, background-color 150ms ease;
+  }
+  .boton:active { transform: translateY(1px); }
+  .boton-primario { background: var(--color-boton); color: #fff; }
+  .boton-primario:hover { background: var(--color-boton-hover); }
+  .boton-claro { background: #fff; color: var(--color-tinta); }
+  .boton-claro:hover { background: var(--color-sol-claro); }
+  /* Botón principal sobre fondos verdes u oscuros: blanco con texto verde. */
+  .boton-sobre-oscuro { background: #fff; color: var(--color-titulo); }
+  .boton-sobre-oscuro:hover { background: var(--color-tinte-1); }
+  /* Botón de preinscripción del hero: celeste del mar del escudo, con texto oscuro (blanco no contrasta). */
+  .boton-celeste { background: var(--color-mar); color: var(--color-texto); }
+  .boton-celeste:hover { background: #8fd4ee; }
+  .banda {
+    background: var(--banda-fondo);
+    color: var(--banda-texto);
+  }
+  .banda-inicial {
+    --banda-fondo: var(--color-inicial-fondo);
+    --banda-texto: var(--color-inicial-texto);
+    --banda-marca: var(--color-inicial-marca);
+    --banda-puro: var(--color-tierra);
+  }
+  .banda-primario {
+    --banda-fondo: var(--color-primario-fondo);
+    --banda-texto: var(--color-primario-texto);
+    --banda-marca: var(--color-primario-marca);
+    --banda-puro: var(--color-sol);
+  }
+  .banda-secundario {
+    --banda-fondo: var(--color-secundario-fondo);
+    --banda-texto: var(--color-secundario-texto);
+    --banda-marca: var(--color-secundario-marca);
+    --banda-puro: var(--color-verde);
+  }
+  .boton-borde { border: 2px solid currentColor; }
+  .boton-borde:hover { background: color-mix(in srgb, currentColor 10%, transparent); }
+
+  .enlace {
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+  }
+  .enlace:hover { text-decoration-thickness: 3px; }
+
+  .foto-mural {
+    border-radius: var(--radius-mural);
+    object-fit: cover;
+  }
+}
+
+/* Header: arriba de todo toma el color del comienzo de cada página (transparente sobre el video,
+   el color de la banda en cada nivel, verde en Preinscripción). Al bajar aparece una isla blanca
+   flotante, con una línea del color del nivel que marca cuánto se leyó.
+   Las dos capas (el fondo de arriba y la isla) solo cambian de opacidad y escala, y el logo se
+   achica con transform: nada cambia de tamaño, así la animación es fluida en el celular. */
+@layer components {
+  .header {
+    --h-fondo: var(--color-superficie);
+    --h-texto: var(--color-texto);
+    --h-linea: var(--color-verde);
+    --isla-x: max(0.5rem, calc(50% - 38.5rem));
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    height: 4.5rem;
+    pointer-events: none;
+  }
+  .header-hero {
+    --h-fondo: linear-gradient(to bottom, rgb(22 58 38 / 0.55), transparent);
+    --h-texto: #fff;
+    --h-linea: var(--color-mar);
+  }
+  .header-verde { --h-fondo: var(--color-cta-fondo); --h-texto: var(--color-cta-texto); --h-linea: var(--color-mar); }
+  .header-inicial { --h-fondo: var(--color-inicial-fondo); --h-texto: var(--color-inicial-texto); --h-linea: var(--color-tierra); }
+  .header-primario { --h-fondo: var(--color-primario-fondo); --h-texto: var(--color-primario-texto); --h-linea: var(--color-sol); }
+  .header-secundario { --h-fondo: var(--color-secundario-fondo); --h-texto: var(--color-secundario-texto); --h-linea: var(--color-verde); }
+
+  .header-isla {
+    position: relative;
+    isolation: isolate;
+    pointer-events: auto;
+    color: var(--h-texto);
+    transition: color 0.4s ease;
+  }
+  /* Fondo de arriba de todo, a lo ancho. */
+  .header-isla::before,
+  .header-isla::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), background-color 0.6s ease;
+  }
+  .header-isla::before {
+    inset: 0;
+    background: var(--h-fondo);
+  }
+  /* La isla: siempre en su lugar, aparece con opacidad y un leve achique. */
+  .header-isla::after {
+    inset: 0.375rem var(--isla-x);
+    border-radius: 1.25rem;
+    background: rgb(255 255 255 / 0.92);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 0 1px rgb(13 43 27 / 0.07), 0 10px 30px -12px rgb(13 43 27 / 0.35);
+    opacity: 0;
+    transform: scale(1.03, 1.2);
+  }
+  .header-barra { height: 4.5rem; }
+  .header-logo {
+    height: 3.5rem;
+    transform-origin: left center;
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .header-flotante .header-isla { color: var(--color-texto); }
+  .header-flotante .header-isla::before { opacity: 0; }
+  .header-flotante .header-isla::after { opacity: 1; transform: none; }
+  /* En pantallas táctiles, sin desenfoque: encima del video del inicio, los navegadores del celular
+     lo recalculan en cada cuadro y la isla parpadea al bajar. Más opaca, se ve igual de limpia. */
+  @media (hover: none) {
+    .header-isla::after {
+      background: rgb(255 255 255 / 0.97);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+  .header-flotante .header-logo { transform: scale(0.8); }
+
+  .header-progreso {
+    position: absolute;
+    left: calc(var(--isla-x) + 1.25rem);
+    right: calc(var(--isla-x) + 1.25rem);
+    bottom: 0.375rem;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--h-linea);
+    transform: scaleX(var(--progreso, 0));
+    transform-origin: left;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .header-flotante .header-progreso { opacity: 1; }
+
+  .header-boton { background: var(--color-boton); color: #fff; }
+  .header-boton:hover { background: var(--color-boton-hover); }
+  .header-oscuro:not(.header-flotante) .header-boton { background: #fff; color: var(--color-titulo); }
+  .header-oscuro:not(.header-flotante) .header-boton:hover { background: var(--color-tinte-1); }
+  .header-oscuro:not(.header-flotante) .header-isla :focus-visible { outline-color: var(--color-sol); }
+
+  .header-menu {
+    pointer-events: auto;
+    margin: 0.5rem;
+    max-height: calc(100svh - 6rem);
+    overflow-y: auto;
+    border-radius: 1.25rem;
+    background: var(--color-superficie);
+    color: var(--color-texto);
+    box-shadow: 0 0 0 1px rgb(13 43 27 / 0.07), 0 16px 40px -12px rgb(13 43 27 / 0.4);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .header-isla, .header-isla::before, .header-isla::after, .header-logo, .header-progreso { transition: none; }
+  }
+}
+
+/* Transiciones entre páginas: la página hace un fundido corto y, por encima, se animan dos piezas
+   del header. El subrayado del menú se desliza del link anterior al nuevo. El logo gira como una
+   moneda al pasar entre el Jardín y el resto del sitio: cada logo tiene su propio nombre de
+   transición, así que entre páginas con el mismo logo no gira.
+   Navegadores sin soporte (o con movimiento reducido) cambian de página como siempre. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+  animation-timing-function: ease;
+}
+
+/* Plan B (ver BaseLayout.astro): si la transición no llegó a la página nueva, el contenido entra con
+   un fundido en lugar de aparecer de golpe. */
+.vt-respaldo main,
+.vt-respaldo footer {
+  animation: respaldo-entra 0.3s ease backwards;
+}
+@keyframes respaldo-entra {
+  from { opacity: 0; }
+}
+
+.nav-indicador {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.5rem;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  view-transition-name: nav-indicador;
+}
+::view-transition-group(nav-indicador) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.3, 0.9, 0.3, 1.05);
+}
+
+/* El giro del logo es uno solo: lo usan la transición entre páginas, el cambio de tarjeta en la
+   preinscripción (nivel.js) y el plan B (BaseLayout.astro), con las clases .logo-sale y .logo-entra. */
+:root {
+  --logo-sale: logo-sale 0.28s cubic-bezier(0.5, 0, 0.75, 0) both;
+  --logo-entra: logo-entra 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+::view-transition-old(logo-epeim):only-child,
+::view-transition-old(logo-pasitos):only-child {
+  animation: var(--logo-sale);
+}
+.logo-sale {
+  animation: var(--logo-sale);
+}
+::view-transition-new(logo-epeim):only-child,
+::view-transition-new(logo-pasitos):only-child {
+  animation: var(--logo-entra);
+  animation-delay: 0.26s;
+}
+.logo-entra {
+  animation: var(--logo-entra);
+}
+@keyframes logo-sale {
+  to { transform: perspective(500px) rotateY(90deg) scale(0.85); }
+}
+@keyframes logo-entra {
+  from { transform: perspective(500px) rotateY(-90deg) scale(0.85); }
+}

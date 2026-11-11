@@ -1,0 +1,87 @@
+---
+import Costa from './Costa.astro';
+import { site } from '../data/site';
+import { aniosDesde } from '../lib/fechas';
+
+const anios = aniosDesde(site.fundacion);
+---
+
+<section class="relative isolate overflow-hidden bg-hero-velo text-white sobre-oscuro -mt-[4.5rem]" aria-labelledby="hero-titulo">
+  <video
+    class="absolute inset-0 -z-10 size-full object-cover"
+    poster="/media/hero-poster.jpg"
+    muted
+    loop
+    playsinline
+    preload="none"
+    aria-hidden="true"
+    data-hero-video
+  >
+    <source src="/media/hero.mp4" type="video/mp4" />
+  </video>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-tr from-hero-velo/95 via-hero-velo/75 to-hero-velo/25"></div>
+
+  <div class="contenedor flex flex-col justify-end min-h-[min(88svh,52rem)] pt-28 pb-24 md:pb-36">
+    <!-- La marca en texto, arriba del título: Google no lee el logo. -->
+    <p class="text-[0.9375rem] sm:text-lg font-semibold text-white/85">Escuela EPEIM y Jardín Pasitos Curiosos</p>
+    <h1 id="hero-titulo" class="mt-2 text-[clamp(2.75rem,7.5vw,6rem)] max-w-[13ch] font-extrabold tracking-[-0.045em]">
+      <span data-anios={site.fundacion}>{anios}</span> años educando en Río Grande
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg md:text-xl text-white/90">
+      Somos una institución de educación integral, con Jardín, Primaria y Secundaria. Creemos en educar para formar
+      personas empáticas, comprometidas con la sociedad y con el cuidado de nuestro medio ambiente.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="/inscripciones/" class="boton boton-celeste">Completar la preinscripción</a>
+      <a href="#niveles" class="boton boton-borde text-white">Conocer los niveles</a>
+    </div>
+  </div>
+
+  <button
+    type="button"
+    class="absolute right-4 bottom-16 md:right-8 md:bottom-28 inline-flex items-center gap-2 rounded-full bg-black/35 px-3.5 py-2 text-sm font-semibold backdrop-blur hover:bg-black/55"
+    data-hero-pausa
+    hidden
+  >
+    <svg viewBox="0 0 16 16" class="size-4" fill="currentColor" aria-hidden="true">
+      <path d="M4 3h3v10H4zM9 3h3v10H9z" data-icono-pausa />
+      <path d="M4 2.5v11l9-5.5z" data-icono-play class="hidden" />
+    </svg>
+    <span data-hero-texto>Pausar video</span>
+  </button>
+
+  <Costa abajo="var(--color-superficie)" class="absolute bottom-0 inset-x-0" />
+</section>
+
+<script>
+  import { aniosDesde } from '../lib/fechas';
+
+  const anios = document.querySelector<HTMLElement>('[data-anios]');
+  if (anios) anios.textContent = String(aniosDesde(anios.dataset.anios!));
+
+  const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+  const boton = document.querySelector<HTMLButtonElement>('[data-hero-pausa]');
+  const reducir = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (video && boton) {
+    const pintar = (pausado: boolean) => {
+      boton.querySelector('[data-hero-texto]')!.textContent = pausado ? 'Reproducir video' : 'Pausar video';
+      boton.querySelector('[data-icono-pausa]')!.classList.toggle('hidden', pausado);
+      boton.querySelector('[data-icono-play]')!.classList.toggle('hidden', !pausado);
+    };
+    boton.hidden = false;
+    if (reducir.matches) {
+      pintar(true);
+    } else {
+      video.preload = 'auto';
+      video.play().then(() => pintar(false)).catch(() => pintar(true));
+    }
+    boton.addEventListener('click', () => {
+      if (video.paused) video.play().then(() => pintar(false));
+      else {
+        video.pause();
+        pintar(true);
+      }
+    });
+  }
+</script>
